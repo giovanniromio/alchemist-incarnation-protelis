@@ -9,7 +9,6 @@
 package it.unibo.alchemist.model.implementations.nodes;
 
 import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
-import it.unibo.alchemist.model.implementations.concentrations.Local;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 import java.util.Map;
@@ -35,7 +34,7 @@ public class ProtelisNode extends GenericNode<Object> implements DeviceUID {
 	}
 
 	@Override
-	protected Local createT() {
+	protected Object createT() {
 		return null;
 	}
 
