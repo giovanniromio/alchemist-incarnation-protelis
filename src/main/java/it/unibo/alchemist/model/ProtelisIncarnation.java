@@ -8,37 +8,27 @@
  */
 package it.unibo.alchemist.model;
 
-import it.unibo.alchemist.language.protelis.datatype.Tuple;
-import it.unibo.alchemist.language.protelis.util.IProgram;
-import it.unibo.alchemist.language.protelis.util.ProtelisLoader;
-import it.unibo.alchemist.language.protelis.vm.DummyContext;
-import it.unibo.alchemist.language.protelis.vm.ExecutionContext;
-import it.unibo.alchemist.model.implementations.molecules.Molecule;
-import it.unibo.alchemist.model.interfaces.IMolecule;
-import it.unibo.alchemist.model.interfaces.INode;
-import it.unibo.alchemist.model.interfaces.Incarnation;
-import org.danilopianini.lang.util.FasterString;
-import it.unibo.alchemist.utils.L;
-
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import alice.tuprolog.InvalidTheoryException;
-import alice.tuprolog.MalformedGoalException;
-import alice.tuprolog.NoSolutionException;
-import alice.tuprolog.Prolog;
-import alice.tuprolog.SolveInfo;
-import alice.tuprolog.Theory;
-import alice.tuprolog.Var;
+import org.danilopianini.lang.util.FasterString;
+import org.protelis.lang.ProtelisLoader;
+import org.protelis.vm.ExecutionContext;
+import org.protelis.vm.IProgram;
+import org.protelis.vm.impl.DummyContext;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+
+import it.unibo.alchemist.model.implementations.molecules.Molecule;
+import it.unibo.alchemist.model.interfaces.IMolecule;
+import it.unibo.alchemist.model.interfaces.INode;
+import it.unibo.alchemist.model.interfaces.Incarnation;
 
 /**
  * @author Danilo Pianini
@@ -46,19 +36,6 @@ import com.google.common.cache.CacheBuilder;
  */
 public class ProtelisIncarnation implements Incarnation {
 
-	/*
-	 * search(A, [A|_]).
-	 * 
-	 * search(A, [B|T]) :- search(A, B).
-	 * 
-	 * search(A, [B|T]) :- search(A, T).
-	 * 
-	 * ts(A) :- search(A, [[[['service 1', 1.3]], ["service 2",0]]]).
-	 */
-	private static final Prolog ENGINE = new Prolog();
-	private static final String GOALP1 = "search(";
-	private static final String GOALP2 = ", ";
-	private static final String GOALP3 = ").";
 	private static final String[] ANS_NAMES = {"ans", "res", "result", "answer", "val", "value"};
 	private static final Set<FasterString> NAMES;
 	
@@ -69,16 +46,6 @@ public class ProtelisIncarnation implements Incarnation {
 		.build();
 
 	static {
-		final String th0 = "search(A, [A|_]).\n";
-		final String th1 = "search(A, [B|T]) :- search(A, B).\n";
-		final String th2 = "search(A, [B|T]) :- search(A, T).";
-		Theory t;
-		try {
-			t = new Theory(th0 + th1 + th2);
-			ENGINE.addTheory(t);
-		} catch (InvalidTheoryException e) {
-			L.error("Unable to initiate tuProlog.");
-		}
 		NAMES = Collections.unmodifiableSet(Arrays.stream(ANS_NAMES)
 				.flatMap(n -> Arrays.stream(new String[]{n.toLowerCase(Locale.US), n.toUpperCase(Locale.US)}))
 				.map(FasterString::new)
@@ -86,7 +53,6 @@ public class ProtelisIncarnation implements Incarnation {
 	}
 	
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public double getProperty(final INode<?> node, final IMolecule mol, final String prop) {
 		Object val = node.getConcentration(mol);
@@ -117,33 +83,6 @@ public class ProtelisIncarnation implements Incarnation {
 				return 1d;
 			} else {
 				return 0d;
-			}
-		} else if (val instanceof Tuple) {
-			/*
-			 * [[service 1, THIS]*]
-			 * 
-			 * . -> subtuble = -> double / string match * -> ignore level
-			 */
-			final Tuple t = (Tuple) val;
-			try {
-				final SolveInfo s = ENGINE.solve(GOALP1 + prop + GOALP2 + t.toString() + GOALP3);
-				if (s.isSuccess()) {
-					final List<Var> binds = s.getBindingVars();
-					if (binds.isEmpty()) {
-						return 1;
-					} else {
-						final Optional<Var> vv = binds.stream()
-								.filter(v -> v.getTerm() instanceof alice.tuprolog.Number)
-								.findFirst();
-						if (vv.isPresent()) {
-							return ((alice.tuprolog.Number) vv.get().getTerm()).doubleValue();
-						}
-					}
-				}
-			} catch (MalformedGoalException e) {
-				L.warn(e);
-			} catch (NoSolutionException e) {
-				L.error(e);
 			}
 		}
 		return Double.NaN;

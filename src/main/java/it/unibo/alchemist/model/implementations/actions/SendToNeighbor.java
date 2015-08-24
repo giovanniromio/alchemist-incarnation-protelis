@@ -8,10 +8,10 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.language.protelis.vm.simulatorvm.AlchemistNetworkManager;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.INode;
 import it.unibo.alchemist.model.interfaces.IReaction;
+import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 import java.util.Objects;
 

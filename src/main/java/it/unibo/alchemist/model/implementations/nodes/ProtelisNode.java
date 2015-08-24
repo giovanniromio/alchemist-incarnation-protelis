@@ -8,20 +8,21 @@
  */
 package it.unibo.alchemist.model.implementations.nodes;
 
-import it.unibo.alchemist.language.protelis.vm.NetworkManager;
-import it.unibo.alchemist.language.protelis.vm.simulatorvm.AlchemistNetworkManager;
 import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
 import it.unibo.alchemist.model.implementations.concentrations.Local;
+import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.protelis.lang.datatype.DeviceUID;
+
 /**
  * @author Danilo Pianini
  *
  */
-public class ProtelisNode extends GenericNode<Object> {
+public class ProtelisNode extends GenericNode<Object> implements DeviceUID {
 
 	private static final long serialVersionUID = 7411790948884770553L;
 	private final Map<ProtelisProgram, AlchemistNetworkManager> netmgrs = new ConcurrentHashMap<>();

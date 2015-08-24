@@ -9,12 +9,6 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.external.cern.jet.random.engine.RandomEngine;
-import it.unibo.alchemist.language.protelis.util.IProgram;
-import it.unibo.alchemist.language.protelis.util.ProtelisLoader;
-import it.unibo.alchemist.language.protelis.vm.ExecutionContext;
-import it.unibo.alchemist.language.protelis.vm.ProtelisVM;
-import it.unibo.alchemist.language.protelis.vm.simulatorvm.AlchemistExecutionContext;
-import it.unibo.alchemist.language.protelis.vm.simulatorvm.AlchemistNetworkManager;
 import it.unibo.alchemist.model.implementations.molecules.Molecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Context;
@@ -23,6 +17,8 @@ import it.unibo.alchemist.model.interfaces.IEnvironment;
 import it.unibo.alchemist.model.interfaces.IMolecule;
 import it.unibo.alchemist.model.interfaces.INode;
 import it.unibo.alchemist.model.interfaces.IReaction;
+import it.unibo.alchemist.protelis.AlchemistExecutionContext;
+import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -30,6 +26,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
+
+import org.protelis.lang.ProtelisLoader;
+import org.protelis.vm.ExecutionContext;
+import org.protelis.vm.IProgram;
+import org.protelis.vm.ProtelisVM;
 
 /**
  * @author Danilo Pianini

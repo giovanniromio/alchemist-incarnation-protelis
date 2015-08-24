@@ -1,13 +1,9 @@
 /**
  * 
  */
-package it.unibo.alchemist.language.protelis.vm.simulatorvm;
+package it.unibo.alchemist.protelis;
 
 import it.unibo.alchemist.external.cern.jet.random.engine.RandomEngine;
-import it.unibo.alchemist.language.protelis.datatype.Tuple;
-import it.unibo.alchemist.language.protelis.util.DeviceUID;
-import it.unibo.alchemist.language.protelis.util.DeviceUIDImpl;
-import it.unibo.alchemist.language.protelis.vm.AbstractExecutionContext;
 import it.unibo.alchemist.model.implementations.molecules.Molecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
@@ -18,6 +14,9 @@ import it.unibo.alchemist.model.interfaces.INode;
 import it.unibo.alchemist.model.interfaces.IPosition;
 import it.unibo.alchemist.model.interfaces.IReaction;
 import org.danilopianini.lang.util.FasterString;
+import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.lang.datatype.Tuple;
+import org.protelis.vm.impl.AbstractExecutionContext;
 
 import java.util.Map;
 
@@ -33,9 +32,15 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
 	private final ProtelisNode node;
 	private final IEnvironment<Object> env;
 	private final IReaction<Object> react;
-	private final DeviceUID device;
 	private final RandomEngine rand;
 	
+	/**
+	 * @param environment the simulation {@link IEnvironment}
+	 * @param localNode the local {@link ProtelisNode}
+	 * @param reaction the {@link IReaction} hosting the program
+	 * @param random the {@link RandomEngine} for this simulation
+	 * @param netmgr the {@link AlchemistNetworkManager} to be used
+	 */
 	public AlchemistExecutionContext(
 			final IEnvironment<Object> environment,
 			final ProtelisNode localNode,
@@ -45,14 +50,13 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
 		super(netmgr);
 		env = environment;
 		node = localNode;
-		device = new DeviceUIDImpl(node.getId());
 		react = reaction;
 		rand = random;
 	}
 	
 	@Override
 	public DeviceUID getDeviceUID() {
-		return device;
+		return node;
 	}
 
 	@Override
@@ -62,11 +66,8 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
 
 	@Override
 	public double distanceTo(final DeviceUID target) {
-		final INode<Object> dest = env.getNodeByID((int) target.getId());
-		if (dest != null) {
-			return env.getDistanceBetweenNodes(node, dest);
-		}
-		return Double.POSITIVE_INFINITY;
+		assert target instanceof ProtelisNode;
+		return env.getDistanceBetweenNodes(node, (ProtelisNode) target);
 	}
 
 	@Override
@@ -112,15 +113,12 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
 		return new AlchemistExecutionContext(env, node, react, rand, (AlchemistNetworkManager) getNetworkManager());
 	}
 
-	@Override
-	protected DeviceUID deviceFromId(final long id) {
-		return new DeviceUIDImpl(id);
-	}
-	
-	public double routingDistance(final DeviceUID dest) {
-		return routingDistance(dest.getId());
-	}
-	
+	/**
+	 * Computes the distance along a map. Requires a {@link IMapEnvironment}.
+	 * 
+	 * @param dest the destination, as a {@link Tuple} of two values: [latitude, longitude]
+	 * @return the distance on a map
+	 */
 	public double routingDistance(final Tuple dest) {
 		if (dest.size() == 2) {
 			return routingDistance(new LatLongPosition((Number) dest.get(0), (Number) dest.get(1)));
@@ -128,14 +126,32 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
 		throw new IllegalArgumentException(dest + " is not a coordinate I can understand.");
 	}
 	
+	/**
+	 * Computes the distance along a map. Requires a {@link IMapEnvironment}.
+	 * 
+	 * @param dest the destination, in form of {@link ProtelisNode} ID. Non integer numbers will be cast to integers by {@link Number#intValue()}.
+	 * @return the distance on a map
+	 */
 	public double routingDistance(final Number dest) {
 		return routingDistance(env.getNodeByID(dest.intValue()));
 	}
 	
+	/**
+	 * Computes the distance along a map. Requires a {@link IMapEnvironment}.
+	 * 
+	 * @param dest the destination, in form of a destination node
+	 * @return the distance on a map
+	 */
 	public double routingDistance(final INode<Object> dest) {
 		return routingDistance(env.getPosition(dest));
 	}
 	
+	/**
+	 * Computes the distance along a map. Requires a {@link IMapEnvironment}.
+	 * 
+	 * @param dest the destination
+	 * @return the distance on a map
+	 */
 	public double routingDistance(final IPosition dest) {
 		if (env instanceof IMapEnvironment<?>) {
 			return ((IMapEnvironment<Object>) env).computeRoute(node, dest).getDistance();

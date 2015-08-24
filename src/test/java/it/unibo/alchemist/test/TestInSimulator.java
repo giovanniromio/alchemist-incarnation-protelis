@@ -15,7 +15,6 @@ import it.unibo.alchemist.core.implementations.Simulation;
 import it.unibo.alchemist.core.interfaces.ISimulation;
 import it.unibo.alchemist.language.EnvironmentBuilder;
 import it.unibo.alchemist.language.protelis.ProtelisDSLStandaloneSetup;
-import it.unibo.alchemist.language.protelis.datatype.Field;
 import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.IEnvironment;
@@ -39,6 +38,7 @@ import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.junit.Test;
+import org.protelis.lang.datatype.Field;
 import org.xml.sax.SAXException;
 
 import com.google.inject.Injector;
@@ -68,6 +68,17 @@ public class TestInSimulator {
 			final Field res = (Field) v;
 			res.valIterator().forEach(fval -> assertEquals(1.0, fval));
 		}));
+	}
+	
+	@Test
+	public void testNbr02() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, SAXException, IOException, ParserConfigurationException, InterruptedException, ExecutionException { 
+		runSimulation("nbr02.psim", 30000, env -> {
+			final double val = (Double) env.getNodes().stream()
+					.flatMap(n -> n.getContents().entrySet().stream())
+					.filter(e -> e.getKey() instanceof ProtelisProgram)
+					.findAny().get().getValue();
+			checkProgramValueOnAll(v -> assertEquals(val, v)).accept(env);
+		});
 	}
 	
 	@SafeVarargs

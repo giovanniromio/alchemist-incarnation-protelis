@@ -1,19 +1,22 @@
 /**
  * 
  */
-package it.unibo.alchemist.language.protelis.vm.simulatorvm;
+package it.unibo.alchemist.protelis;
 
-import gnu.trove.map.TLongObjectMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
-import it.unibo.alchemist.language.protelis.util.CodePath;
-import it.unibo.alchemist.language.protelis.vm.NetworkManager;
 import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.IEnvironment;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.vm.NetworkManager;
+import org.protelis.vm.util.CodePath;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Emulates a {@link NetworkManager}. This particular network manager does not
@@ -30,7 +33,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
 	private final IEnvironment<Object> env;
 	private final ProtelisNode node;
 	private final ProtelisProgram prog;
-	private TLongObjectMap<Map<CodePath, Object>> msgs = new TLongObjectHashMap<>();
+	private Map<DeviceUID, Map<CodePath, Object>> msgs = new LinkedHashMap<>();
 	private Map<CodePath, Object> toBeSent;
 
 	/**
@@ -48,9 +51,9 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
 	}
 	
 	@Override
-	public TLongObjectMap<Map<CodePath, Object>> takeMessages() {
-		final TLongObjectMap<Map<CodePath, Object>> res = msgs;
-		msgs = new TLongObjectHashMap<>();
+	public Map<DeviceUID, Map<CodePath, Object>> takeMessages() {
+		final Map<DeviceUID, Map<CodePath, Object>> res = msgs;
+		msgs = new LinkedHashMap<>();
 		return res;
 	}
 
@@ -62,6 +65,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
 	/**
 	 *  
 	 */
+	@SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
 	public void simulateMessageArrival() {
 		Objects.requireNonNull(toBeSent);
 		if (!toBeSent.isEmpty()) {
@@ -73,7 +77,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
 						 * The node is running the program. Otherwise, the
 						 * program is discarded
 						 */
-						destination.msgs.put(node.getId(), toBeSent);
+						destination.msgs.put(node, toBeSent);
 					}
 				}
 			});
