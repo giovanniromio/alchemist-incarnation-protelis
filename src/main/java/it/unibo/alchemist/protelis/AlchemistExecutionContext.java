@@ -13,6 +13,8 @@ import it.unibo.alchemist.model.interfaces.IMolecule;
 import it.unibo.alchemist.model.interfaces.INode;
 import it.unibo.alchemist.model.interfaces.IPosition;
 import it.unibo.alchemist.model.interfaces.IReaction;
+
+import org.danilopianini.lang.HashUtils;
 import org.danilopianini.lang.util.FasterString;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.Tuple;
@@ -33,6 +35,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
 	private final IEnvironment<Object> env;
 	private final IReaction<Object> react;
 	private final RandomEngine rand;
+	private int hash;
 	
 	/**
 	 * @param environment the simulation {@link IEnvironment}
@@ -159,4 +162,24 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
 		return getDevicePosition().getDistanceTo(dest);
 	}
 
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof AlchemistExecutionContext) {
+			final AlchemistExecutionContext ctx = (AlchemistExecutionContext) obj;
+			return node.equals(ctx.node) && env.equals(ctx.env) && react.equals(ctx.react) && rand.equals(ctx.rand);
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		if (hash == 0) {
+			hash = HashUtils.hash32(node, env, react);
+		}
+		return hash;
+	}
+	
 }
