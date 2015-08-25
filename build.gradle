@@ -37,7 +37,6 @@ configurations.all {
 			substitute module('org.ow2.asm:asm-commons:5.0.2') with module("org.ow2.asm:asm-commons:$asmVersion")
 			
 			substitute module('com.google.guava:guava:[10.0.1,14.0.1]') with module('com.google.guava:guava-jdk5:14.0.1')
-			substitute module('com.google.guava:guava:14.0.1') with module('com.google.guava:guava-jdk5:14.0.1')
 			substitute module('com.google.guava:guava:18.0') with module('com.google.guava:guava:[18.0, 19.0-rc1]')
 			
 		    substitute module('com.google.protobuf:protobuf-java:2.4.1') with module('com.google.protobuf:protobuf-java:2.6.1')
@@ -66,6 +65,7 @@ configurations {
 
 dependencies {
 	compile "org.danilopianini:javalib-java7:$javalib7Version"
+	compile "com.google.guava:guava:$guavaVersion"
 	compile "org.protelis:protelis:$protelisVersion"
     compile "it.unibo.alchemist:alchemist-interfaces:$interfacesVersion"
     compile "it.unibo.alchemist:alchemist-baselib:$baselibVersion"
