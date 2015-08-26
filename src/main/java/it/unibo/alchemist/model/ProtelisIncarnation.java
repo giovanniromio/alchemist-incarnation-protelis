@@ -34,7 +34,7 @@ import it.unibo.alchemist.model.interfaces.Incarnation;
  * @author Danilo Pianini
  *
  */
-public class ProtelisIncarnation implements Incarnation {
+public final class ProtelisIncarnation implements Incarnation {
 
 	private static final String[] ANS_NAMES = {"ans", "res", "result", "answer", "val", "value"};
 	private static final Set<FasterString> NAMES;
