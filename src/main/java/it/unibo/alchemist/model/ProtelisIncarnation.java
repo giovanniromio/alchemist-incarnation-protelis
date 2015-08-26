@@ -112,5 +112,10 @@ public class ProtelisIncarnation implements Incarnation {
 	public IMolecule createMolecule(final String s) {
 		return new Molecule(s);
 	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName();
+	}
 
 }
