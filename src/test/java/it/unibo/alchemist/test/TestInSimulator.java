@@ -44,10 +44,15 @@ import org.xml.sax.SAXException;
 import com.google.inject.Injector;
 
 
+/**
+ * @author Danilo Pianini
+ *
+ */
 public class TestInSimulator {
 	
 	private static final XtextResourceSet XTEXT;
 	private static final Injector INJECTOR;
+	private static final int LONG_SIMULATION_FINAL_TIME = 30000;
 	
 	static {
 		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri(".");
@@ -56,13 +61,19 @@ public class TestInSimulator {
 		XTEXT.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 	}
 	
+	/**
+	 * @throws Exception in case of failure
+	 */
 	@Test
-	public void testSimple01() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, SAXException, IOException, ParserConfigurationException, InterruptedException, ExecutionException { 
+	public void testSimple01() throws Exception { 
 		runSimulation("simple01.psim", 2, checkProgramValueOnAll(v -> assertEquals(1.0, v)));
 	}
 	
+	/**
+	 * @throws Exception in case of failure
+	 */
 	@Test
-	public void testNbr01() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, SAXException, IOException, ParserConfigurationException, InterruptedException, ExecutionException { 
+	public void testNbr01() throws Exception { 
 		runSimulation("nbr01.psim", 2, checkProgramValueOnAll(v -> {
 			assertTrue(v instanceof Field);
 			final Field res = (Field) v;
@@ -70,9 +81,12 @@ public class TestInSimulator {
 		}));
 	}
 	
+	/**
+	 * @throws Exception in case of failure
+	 */
 	@Test
-	public void testNbr02() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, SAXException, IOException, ParserConfigurationException, InterruptedException, ExecutionException { 
-		runSimulation("nbr02.psim", 30000, env -> {
+	public void testNbr02() throws Exception { 
+		runSimulation("nbr02.psim", LONG_SIMULATION_FINAL_TIME, env -> {
 			final double val = (Double) env.getNodes().stream()
 					.flatMap(n -> n.getContents().entrySet().stream())
 					.filter(e -> e.getKey() instanceof ProtelisProgram)
@@ -83,11 +97,11 @@ public class TestInSimulator {
 	
 	@SafeVarargs
 	private static <T> void runSimulation(final String relativeFilePath, final double finalTime, final Consumer<IEnvironment<Object>>... checkProcedures) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, SAXException, IOException, ParserConfigurationException, InterruptedException, ExecutionException  {
-		Resource res = XTEXT.getResource(URI.createURI("classpath:/simulations/" + relativeFilePath), true);
-		IGenerator generator = INJECTOR.getInstance(IGenerator.class);
-		InMemoryFileSystemAccess fsa = INJECTOR.getInstance(InMemoryFileSystemAccess.class);
+		final Resource res = XTEXT.getResource(URI.createURI("classpath:/simulations/" + relativeFilePath), true);
+		final IGenerator generator = INJECTOR.getInstance(IGenerator.class);
+		final InMemoryFileSystemAccess fsa = INJECTOR.getInstance(InMemoryFileSystemAccess.class);
 		generator.doGenerate(res, fsa);
-		Collection<CharSequence> files = fsa.getTextFiles().values();
+		final Collection<CharSequence> files = fsa.getTextFiles().values();
 		if (files.size() != 1) {
 			fail();
 		}
