@@ -50,6 +50,7 @@ configurations.all {
 			
 		    substitute module('org.slf4j:slf4j-api:1.7.10') with module('org.slf4j:slf4j-api:[1.7.10, 1.8.0[')
 		}
+		force "com.google.guava:guava:$guavaVersion"
     }
 }
 
