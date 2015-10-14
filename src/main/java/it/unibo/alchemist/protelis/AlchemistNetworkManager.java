@@ -51,14 +51,14 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
 	}
 	
 	@Override
-	public Map<DeviceUID, Map<CodePath, Object>> takeMessages() {
+	public Map<DeviceUID, Map<CodePath, Object>> getNeighborState() {
 		final Map<DeviceUID, Map<CodePath, Object>> res = msgs;
 		msgs = new LinkedHashMap<>();
 		return res;
 	}
 
 	@Override
-	public void sendMessage(final Map<CodePath, Object> toSend) {
+	public void shareState(final Map<CodePath, Object> toSend) {
 		toBeSent = toSend;
 	}
 	

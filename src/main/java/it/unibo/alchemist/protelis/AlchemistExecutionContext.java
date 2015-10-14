@@ -13,8 +13,10 @@ import it.unibo.alchemist.model.interfaces.IMolecule;
 import it.unibo.alchemist.model.interfaces.INode;
 import it.unibo.alchemist.model.interfaces.IPosition;
 import it.unibo.alchemist.model.interfaces.IReaction;
+import it.unibo.alchemist.model.interfaces.ITime;
 
 import org.danilopianini.lang.HashUtils;
+import org.danilopianini.lang.PrimitiveUtils;
 import org.danilopianini.lang.util.FasterString;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.Tuple;
@@ -35,6 +37,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
 	private final IEnvironment<Object> env;
 	private final IReaction<Object> react;
 	private final RandomEngine rand;
+	private ITime previous;
 	private int hash;
 	
 	/**
@@ -181,5 +184,13 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
 		}
 		return hash;
 	}
+	
+//	@Override
+//	public Number getDeltaTime() {
+//		if (previous == null) {
+//			previous = react.getTau();
+//		}
+//		return 1;
+//	}
 	
 }

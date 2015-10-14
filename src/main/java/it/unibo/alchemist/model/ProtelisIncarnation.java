@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import org.danilopianini.lang.util.FasterString;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.vm.ExecutionContext;
-import org.protelis.vm.IProgram;
+import org.protelis.vm.ProtelisProgram;
 import org.protelis.vm.impl.DummyContext;
 
 import com.google.common.cache.Cache;
@@ -39,7 +39,7 @@ public final class ProtelisIncarnation implements Incarnation {
 	private static final String[] ANS_NAMES = {"ans", "res", "result", "answer", "val", "value"};
 	private static final Set<FasterString> NAMES;
 	
-	private final Cache<String, Optional<IProgram>> cache = CacheBuilder.newBuilder()
+	private final Cache<String, Optional<ProtelisProgram>> cache = CacheBuilder.newBuilder()
 		.maximumSize(100)
 		.expireAfterAccess(1, TimeUnit.HOURS)
 		.expireAfterWrite(1, TimeUnit.HOURS)
@@ -56,7 +56,7 @@ public final class ProtelisIncarnation implements Incarnation {
 	@Override
 	public double getProperty(final INode<?> node, final IMolecule mol, final String prop) {
 		Object val = node.getConcentration(mol);
-		Optional<IProgram> prog = cache.getIfPresent(prop);
+		Optional<ProtelisProgram> prog = cache.getIfPresent(prop);
 		if (prog == null) {
 			try {
 				prog = Optional.of(ProtelisLoader.parse(prop));
@@ -88,11 +88,11 @@ public final class ProtelisIncarnation implements Incarnation {
 		return Double.NaN;
 	}
 
-	private static Object preprocess(final Optional<IProgram> prog, final Object val) {
+	private static Object preprocess(final Optional<ProtelisProgram> prog, final Object val) {
 		try {
 			if (prog.isPresent()) {
 				final ExecutionContext ctx = new DummyContext();
-				final IProgram program = prog.get();
+				final ProtelisProgram program = prog.get();
 				ctx.setup();
 				NAMES.stream().forEach(n -> ctx.putEnvironmentVariable(n.toString(), val));
 				program.compute(ctx);

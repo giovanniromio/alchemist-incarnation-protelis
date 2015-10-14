@@ -29,7 +29,6 @@ import java.util.Objects;
 
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.vm.ExecutionContext;
-import org.protelis.vm.IProgram;
 import org.protelis.vm.ProtelisVM;
 
 /**
@@ -42,7 +41,7 @@ public class ProtelisProgram extends Molecule implements IAction<Object> {
 	private final IEnvironment<Object> environment;
 	private final ProtelisNode node;
 	private final IReaction<Object> reaction;
-	private final IProgram program;
+	private final org.protelis.vm.ProtelisProgram program;
 	private final RandomEngine random;
 	private transient ProtelisVM vm;
 	private boolean computationalCycleComplete;
@@ -56,11 +55,16 @@ public class ProtelisProgram extends Molecule implements IAction<Object> {
 	 * @throws SecurityException if you are not authorized to load required classes
 	 * @throws ClassNotFoundException if required classes can not be found
 	 */
-	public ProtelisProgram(final IEnvironment<Object> env, final ProtelisNode n, final IReaction<Object> r, final RandomEngine rand, final String prog) throws SecurityException, ClassNotFoundException {
-		this(n, env, r, rand, programFromString(prog));
+	public ProtelisProgram(
+			final IEnvironment<Object> env,
+			final ProtelisNode n,
+			final IReaction<Object> r,
+			final RandomEngine rand,
+			final String prog) throws SecurityException, ClassNotFoundException {
+		this(env, n, r, rand, programFromString(prog));
 	}
 
-	private static IProgram programFromString(final String s) {
+	private static org.protelis.vm.ProtelisProgram programFromString(final String s) {
 		try {
 			new URI(s);
 			/*
@@ -76,7 +80,12 @@ public class ProtelisProgram extends Molecule implements IAction<Object> {
 		}
 	}
 	
-	private ProtelisProgram(final ProtelisNode n, final IEnvironment<Object> env, final IReaction<Object> r, final RandomEngine rand, final IProgram prog) {
+	private ProtelisProgram(
+			final IEnvironment<Object> env,
+			final ProtelisNode n,
+			final IReaction<Object> r,
+			final RandomEngine rand,
+			final org.protelis.vm.ProtelisProgram prog) {
 		super(prog.getName());
 		Objects.requireNonNull(env);
 		Objects.requireNonNull(r);
@@ -97,7 +106,7 @@ public class ProtelisProgram extends Molecule implements IAction<Object> {
 	@Override
 	public ProtelisProgram cloneOnNewNode(final INode<Object> n, final IReaction<Object> r) {
 		if (n instanceof ProtelisNode) {
-			return new ProtelisProgram((ProtelisNode) n, environment, r, random, program);
+			return new ProtelisProgram(environment, (ProtelisNode) n, r, random, program);
 		}
 		throw new IllegalStateException("Can not load a Protelis program on a " + n.getClass()
 				+ ". A " + ProtelisNode.class + " is required.");
