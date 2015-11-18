@@ -8,7 +8,9 @@
  */
 package it.unibo.alchemist.model.implementations.nodes;
 
+import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
+import it.unibo.alchemist.model.interfaces.IMolecule;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 import java.util.Map;
@@ -16,54 +18,99 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.protelis.lang.datatype.DeviceUID;
+import org.protelis.vm.ExecutionEnvironment;
 
 /**
  * @author Danilo Pianini
  *
  */
-public class ProtelisNode extends GenericNode<Object> implements DeviceUID {
+public class ProtelisNode extends GenericNode<Object>implements DeviceUID, ExecutionEnvironment {
 
-	private static final long serialVersionUID = 7411790948884770553L;
-	private final Map<ProtelisProgram, AlchemistNetworkManager> netmgrs = new ConcurrentHashMap<>();
+    private static final long serialVersionUID = 7411790948884770553L;
+    private final Map<ProtelisProgram, AlchemistNetworkManager> netmgrs = new ConcurrentHashMap<>();
 
-	/**
-	 * Builds a new {@link ProtelisNode}.
-	 */
-	public ProtelisNode() {
-		super(true);
-	}
+    /**
+     * Builds a new {@link ProtelisNode}.
+     */
+    public ProtelisNode() {
+        super(true);
+    }
 
-	@Override
-	protected Object createT() {
-		return null;
-	}
+    @Override
+    protected Object createT() {
+        return null;
+    }
 
-	@Override
-	public String toString() {
-		return Long.toString(getId());
-	}
+    @Override
+    public String toString() {
+        return Long.toString(getId());
+    }
 
-	/**
-	 * Adds a new {@link NetworkManager}.
-	 * 
-	 * @param program
-	 *            the {@link ProtelisProgram}
-	 * @param netmgr
-	 *            the {@link AlchemistNetworkManager}
-	 */
-	public void addNetworkManger(final ProtelisProgram program, final AlchemistNetworkManager netmgr) {
-		netmgrs.put(program, netmgr);
-	}
+    /**
+     * Adds a new {@link NetworkManager}.
+     * 
+     * @param program
+     *            the {@link ProtelisProgram}
+     * @param netmgr
+     *            the {@link AlchemistNetworkManager}
+     */
+    public void addNetworkManger(final ProtelisProgram program, final AlchemistNetworkManager netmgr) {
+        netmgrs.put(program, netmgr);
+    }
 
-	/**
-	 * @param program
-	 *            the {@link ProtelisProgram}
-	 * @return the {@link AlchemistNetworkManager} for this specific
-	 *         {@link ProtelisProgram}
-	 */
-	public AlchemistNetworkManager getNetworkManager(final ProtelisProgram program) {
-		Objects.requireNonNull(program);
-		return netmgrs.get(program);
-	}
-	
+    /**
+     * @param program
+     *            the {@link ProtelisProgram}
+     * @return the {@link AlchemistNetworkManager} for this specific
+     *         {@link ProtelisProgram}
+     */
+    public AlchemistNetworkManager getNetworkManager(final ProtelisProgram program) {
+        Objects.requireNonNull(program);
+        return netmgrs.get(program);
+    }
+
+    private static IMolecule makeMol(final String id) {
+        return ProtelisIncarnation.instance().createMolecule(id);
+    }
+    
+    @Override
+    public boolean has(final String id) {
+        return contains(makeMol(id));
+    }
+
+    @Override
+    public Object get(final String id) {
+        return getConcentration(makeMol(id));
+    }
+
+    @Override
+    public Object get(final String id, final Object defaultValue) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean put(final String id, final Object v) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Object remove(final String id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void commit() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setup() {
+        // TODO Auto-generated method stub
+
+    }
+
 }
