@@ -45,95 +45,93 @@ import com.google.inject.Injector;
 
 
 /**
- * @author Danilo Pianini
- *
  */
 public class TestInSimulator {
-	
-	private static final XtextResourceSet XTEXT;
-	private static final Injector INJECTOR;
-	private static final int LONG_SIMULATION_FINAL_TIME = 30000;
-	
-	static {
-		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri(".");
-		INJECTOR = new ProtelisDSLStandaloneSetup().createInjectorAndDoEMFRegistration();
-		XTEXT = INJECTOR.getInstance(XtextResourceSet.class);
-		XTEXT.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-	}
-	
-	/**
-	 * @throws Exception in case of failure
-	 */
-	@Test
-	public void testSimple01() throws Exception { 
-		runSimulation("simple01.psim", 2, checkProgramValueOnAll(v -> assertEquals(1.0, v)));
-	}
-	
-	/**
-	 * @throws Exception in case of failure
-	 */
-	@Test
-	public void testNbr01() throws Exception { 
-		runSimulation("nbr01.psim", 2, checkProgramValueOnAll(v -> {
-			assertTrue(v instanceof Field);
-			final Field res = (Field) v;
-			res.valIterator().forEach(fval -> assertEquals(1.0, fval));
-		}));
-	}
-	
-	/**
-	 * @throws Exception in case of failure
-	 */
-//	@Test
-//	public void testNbr02() throws Exception { 
-//		runSimulation("nbr02.psim", LONG_SIMULATION_FINAL_TIME, env -> {
-//			final double val = (Double) env.getNodes().stream()
-//					.flatMap(n -> n.getContents().entrySet().stream())
-//					.filter(e -> e.getKey() instanceof ProtelisProgram)
-//					.findAny().get().getValue();
-//			checkProgramValueOnAll(v -> assertEquals(val, v)).accept(env);
-//		});
-//	}
-	
-	@SafeVarargs
-	private static <T> void runSimulation(final String relativeFilePath, final double finalTime, final Consumer<IEnvironment<Object>>... checkProcedures) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, SAXException, IOException, ParserConfigurationException, InterruptedException, ExecutionException  {
-		final Resource res = XTEXT.getResource(URI.createURI("classpath:/simulations/" + relativeFilePath), true);
-		final IGenerator generator = INJECTOR.getInstance(IGenerator.class);
-		final InMemoryFileSystemAccess fsa = INJECTOR.getInstance(InMemoryFileSystemAccess.class);
-		generator.doGenerate(res, fsa);
-		final Collection<CharSequence> files = fsa.getTextFiles().values();
-		if (files.size() != 1) {
-			fail();
-		}
-		final ByteArrayInputStream strIS = new ByteArrayInputStream(files.stream().findFirst().get().toString().getBytes(Charsets.UTF_8));
-		final IEnvironment<Object> env = EnvironmentBuilder.build(strIS).get().getEnvironment();
-		final ISimulation<Object> sim = new Simulation<>(env, new DoubleTime(finalTime));
-		sim.play();
-		/*
-		 * Use this thread: intercept failures.
-		 */
-		sim.run();
-		Arrays.stream(checkProcedures).forEachOrdered(p -> p.accept(env));
-	}
-	
-	private static <T> Consumer<IEnvironment<T>> checkOnNodes(final Consumer<INode<T>> proc) {
-		return env -> env.forEach(n -> {
-			proc.accept(n);
-		});
-	}
-	
-	private static <T> Consumer<IEnvironment<T>> checkProgramValueOnAll(final Consumer<Object> proc) {
-		return checkOnNodes(checkProtelisProgramValue(proc));
-	}
-	
-	private static <T> Consumer<INode<T>> checkProtelisProgramValue(final Consumer<Object> check) {
-		return n -> n.forEach(r -> {
-			r.getActions().parallelStream()
-				.filter(a -> a instanceof ProtelisProgram)
-				.forEach(a -> {
-					check.accept(n.getConcentration((ProtelisProgram) a));
-				});
-			});
-	}
+
+    private static final XtextResourceSet XTEXT;
+    private static final Injector INJECTOR;
+    private static final int LONG_SIMULATION_FINAL_TIME = 30000;
+
+    static {
+        new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri(".");
+        INJECTOR = new ProtelisDSLStandaloneSetup().createInjectorAndDoEMFRegistration();
+        XTEXT = INJECTOR.getInstance(XtextResourceSet.class);
+        XTEXT.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+    }
+
+    /**
+     * @throws Exception in case of failure
+     */
+    @Test
+    public void testSimple01() throws Exception { 
+        runSimulation("simple01.psim", 2, checkProgramValueOnAll(v -> assertEquals(1.0, v)));
+    }
+
+    /**
+     * @throws Exception in case of failure
+     */
+    @Test
+    public void testNbr01() throws Exception { 
+        runSimulation("nbr01.psim", 2, checkProgramValueOnAll(v -> {
+            assertTrue(v instanceof Field);
+            final Field res = (Field) v;
+            res.valIterator().forEach(fval -> assertEquals(1.0, fval));
+        }));
+    }
+
+    /**
+     * @throws Exception in case of failure
+     */
+//    @Test
+//    public void testNbr02() throws Exception { 
+//        runSimulation("nbr02.psim", LONG_SIMULATION_FINAL_TIME, env -> {
+//            final double val = (Double) env.getNodes().stream()
+//                    .flatMap(n -> n.getContents().entrySet().stream())
+//                    .filter(e -> e.getKey() instanceof ProtelisProgram)
+//                    .findAny().get().getValue();
+//            checkProgramValueOnAll(v -> assertEquals(val, v)).accept(env);
+//        });
+//    }
+
+    @SafeVarargs
+    private static <T> void runSimulation(final String relativeFilePath, final double finalTime, final Consumer<IEnvironment<Object>>... checkProcedures) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, SAXException, IOException, ParserConfigurationException, InterruptedException, ExecutionException  {
+        final Resource res = XTEXT.getResource(URI.createURI("classpath:/simulations/" + relativeFilePath), true);
+        final IGenerator generator = INJECTOR.getInstance(IGenerator.class);
+        final InMemoryFileSystemAccess fsa = INJECTOR.getInstance(InMemoryFileSystemAccess.class);
+        generator.doGenerate(res, fsa);
+        final Collection<CharSequence> files = fsa.getTextFiles().values();
+        if (files.size() != 1) {
+            fail();
+        }
+        final ByteArrayInputStream strIS = new ByteArrayInputStream(files.stream().findFirst().get().toString().getBytes(Charsets.UTF_8));
+        final IEnvironment<Object> env = EnvironmentBuilder.build(strIS).get().getEnvironment();
+        final ISimulation<Object> sim = new Simulation<>(env, new DoubleTime(finalTime));
+        sim.play();
+        /*
+         * Use this thread: intercept failures.
+         */
+        sim.run();
+        Arrays.stream(checkProcedures).forEachOrdered(p -> p.accept(env));
+    }
+
+    private static <T> Consumer<IEnvironment<T>> checkOnNodes(final Consumer<INode<T>> proc) {
+        return env -> env.forEach(n -> {
+            proc.accept(n);
+        });
+    }
+
+    private static <T> Consumer<IEnvironment<T>> checkProgramValueOnAll(final Consumer<Object> proc) {
+        return checkOnNodes(checkProtelisProgramValue(proc));
+    }
+
+    private static <T> Consumer<INode<T>> checkProtelisProgramValue(final Consumer<Object> check) {
+        return n -> n.forEach(r -> {
+            r.getActions().parallelStream()
+                .filter(a -> a instanceof ProtelisProgram)
+                .forEach(a -> {
+                    check.accept(n.getConcentration((ProtelisProgram) a));
+                });
+            });
+    }
 
 }

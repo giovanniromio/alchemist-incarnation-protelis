@@ -21,8 +21,6 @@ import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.ExecutionEnvironment;
 
 /**
- * @author Danilo Pianini
- *
  */
 public class ProtelisNode extends GenericNode<Object>implements DeviceUID, ExecutionEnvironment {
 
@@ -72,7 +70,7 @@ public class ProtelisNode extends GenericNode<Object>implements DeviceUID, Execu
     private static IMolecule makeMol(final String id) {
         return ProtelisIncarnation.instance().createMolecule(id);
     }
-    
+
     @Override
     public boolean has(final String id) {
         return contains(makeMol(id));

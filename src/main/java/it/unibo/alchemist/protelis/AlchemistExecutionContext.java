@@ -18,8 +18,6 @@ import it.unibo.alchemist.model.interfaces.IPosition;
 import it.unibo.alchemist.model.interfaces.IReaction;
 
 /**
- * @author Danilo Pianini
- *
  */
 public class AlchemistExecutionContext extends AbstractExecutionContext {
 

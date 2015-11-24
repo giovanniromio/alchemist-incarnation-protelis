@@ -37,8 +37,6 @@ import it.unibo.alchemist.model.interfaces.INode;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 
 /**
- * @author Danilo Pianini
- *
  */
 public final class ProtelisIncarnation implements Incarnation {
 
