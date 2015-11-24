@@ -20,6 +20,11 @@ apply plugin: 'org.danilopianini.smartrrr'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+substitutions {
+    substitute 'asm:asm' up_to '6' with 'org.ow2.asm:asm' at '+'
+    substitute 'com.google.guava:guava' up_to '14.0.1' with 'com.google.guava:guava-jdk5' at '+'
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = gradleVersionToUse
 }
