@@ -3,10 +3,6 @@
  */
 package it.unibo.alchemist.protelis;
 
-import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
-import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
-import it.unibo.alchemist.model.interfaces.IEnvironment;
-
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,7 +12,9 @@ import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.NetworkManager;
 import org.protelis.vm.util.CodePath;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
+import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
+import it.unibo.alchemist.model.interfaces.IEnvironment;
 
 /**
  * Emulates a {@link NetworkManager}. This particular network manager does not
@@ -63,8 +61,8 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
     /**
      * 
      */
-    @SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
     public void simulateMessageArrival() {
+        assert toBeSent != null;
         Objects.requireNonNull(toBeSent);
         if (!toBeSent.isEmpty()) {
             env.getNeighborhood(node).forEach(n -> {
