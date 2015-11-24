@@ -7,7 +7,15 @@ apply plugin: 'project-report'
 apply plugin: 'maven'
 apply plugin: 'build-dashboard'
 apply plugin: 'signing'
-apply from: 'range-resolver.gradle'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.danilopianini:smartrrr:0.0.0'
+    }
+}
+apply plugin: 'org.danilopianini.smartrrr'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
