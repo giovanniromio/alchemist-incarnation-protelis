@@ -82,16 +82,16 @@ public class TestInSimulator {
     /**
      * @throws Exception in case of failure
      */
-//    @Test
-//    public void testNbr02() throws Exception { 
-//        runSimulation("nbr02.psim", LONG_SIMULATION_FINAL_TIME, env -> {
-//            final double val = (Double) env.getNodes().stream()
-//                    .flatMap(n -> n.getContents().entrySet().stream())
-//                    .filter(e -> e.getKey() instanceof ProtelisProgram)
-//                    .findAny().get().getValue();
-//            checkProgramValueOnAll(v -> assertEquals(val, v)).accept(env);
-//        });
-//    }
+    @Test
+    public void testNbr02() throws Exception { 
+        runSimulation("nbr02.psim", LONG_SIMULATION_FINAL_TIME, env -> {
+            final double val = (Double) env.getNodes().stream()
+                    .flatMap(n -> n.getContents().entrySet().stream())
+                    .filter(e -> e.getKey() instanceof ProtelisProgram)
+                    .findAny().get().getValue();
+            checkProgramValueOnAll(v -> assertEquals(val, v)).accept(env);
+        });
+    }
 
     @SafeVarargs
     private static <T> void runSimulation(final String relativeFilePath, final double finalTime, final Consumer<IEnvironment<Object>>... checkProcedures) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, SAXException, IOException, ParserConfigurationException, InterruptedException, ExecutionException  {
