@@ -55,7 +55,7 @@ public final class ProtelisIncarnation implements Incarnation {
                         .map(FasterString::new).collect(Collectors.toSet()));
     }
 
-    private static final ProtelisIncarnation INSTANCE = new ProtelisIncarnation();
+    private static final ProtelisIncarnation SINGLETON = new ProtelisIncarnation();
 
     @Override
     public double getProperty(final INode<?> node, final IMolecule mol, final String prop) {
@@ -126,7 +126,7 @@ public final class ProtelisIncarnation implements Incarnation {
      * @return an instance of a {@link ProtelisIncarnation}
      */
     public static ProtelisIncarnation instance() {
-        return INSTANCE;
+        return SINGLETON;
     }
 
     private static class DummyContext extends AbstractExecutionContext {
