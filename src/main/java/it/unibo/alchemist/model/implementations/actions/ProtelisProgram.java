@@ -31,8 +31,11 @@ import org.protelis.lang.ProtelisLoader;
 import org.protelis.vm.ExecutionContext;
 import org.protelis.vm.ProtelisVM;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  */
+@SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "This is desired.")
 public class ProtelisProgram extends Molecule implements IAction<Object> {
 
     private static final long serialVersionUID = 2207914086772704332L;
