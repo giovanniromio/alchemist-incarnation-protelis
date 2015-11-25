@@ -4,7 +4,8 @@ default environment
 linking nodes in range 5
  
 protelis program prog 
-rep (r <- random) {
+let rnd = self.nextRandomDouble();
+rep (r <- rnd) {
 	mux(r < minHood(nbr(r))) {
 		r
 	} else {

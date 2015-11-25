@@ -11,70 +11,68 @@ package it.unibo.alchemist.model.implementations.concentrations;
 import it.unibo.alchemist.model.interfaces.IConcentration;
 
 /**
- * @author Danilo Pianini
- * 
  */
 public class Local implements IConcentration<Object> {
 
-	private static final long serialVersionUID = 4137133493821814841L;
-	private final Object content;
+    private static final long serialVersionUID = 4137133493821814841L;
+    private final Object content;
 
-	/**
-	 * 
-	 */
-	public Local() {
-		this(null);
-	}
+    /**
+     * 
+     */
+    public Local() {
+        this(null);
+    }
 
-	/**
-	 * Builds a new concentration.
-	 * 
-	 * @param t
-	 *            the concentration value
-	 */
-	public Local(final Object t) {
-		Object temp = t;
-		if (t instanceof String) {
-			final String ts = (String) t;
-			try {
-				temp = Double.parseDouble(ts);
-			} catch (NumberFormatException e) {
-				if (ts.equalsIgnoreCase("true") || ts.equalsIgnoreCase("false")) {
-					temp = Boolean.parseBoolean(ts);
-				}
-			}
-		}
-		content = temp;
-	}
+    /**
+     * Builds a new concentration.
+     * 
+     * @param t
+     *            the concentration value
+     */
+    public Local(final Object t) {
+        Object temp = t;
+        if (t instanceof String) {
+            final String ts = (String) t;
+            try {
+                temp = Double.parseDouble(ts);
+            } catch (NumberFormatException e) {
+                if (ts.equalsIgnoreCase("true") || ts.equalsIgnoreCase("false")) {
+                    temp = Boolean.parseBoolean(ts);
+                }
+            }
+        }
+        content = temp;
+    }
 
-	@Override
-	public Object getContent() {
-		return content;
-	}
+    @Override
+    public Object getContent() {
+        return content;
+    }
 
-	@Override
-	public String toString() {
-		if (content == null) {
-			return "null";
-		}
-		return content.toString();
-	}
+    @Override
+    public String toString() {
+        if (content == null) {
+            return "null";
+        }
+        return content.toString();
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (obj instanceof Local) {
-			final Local l = (Local) obj;
-			if (content == null) {
-				return l.content == null;
-			}
-			return content.equals(l.content);
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof Local) {
+            final Local l = (Local) obj;
+            if (content == null) {
+                return l.content == null;
+            }
+            return content.equals(l.content);
+        }
+        return false;
+    }
 
-	@Override
-	public int hashCode() {
-		return content.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return content.hashCode();
+    }
 
 }

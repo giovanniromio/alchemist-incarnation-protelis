@@ -14,43 +14,47 @@ import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.INode;
 
 /**
- * @author Danilo Pianini
- *
  */
 public class ComputationalRoundComplete extends AbstractCondition<Object> {
 
-	private static final long serialVersionUID = -4113718948444451107L;
-	private final ProtelisProgram program;
-	
-	public ComputationalRoundComplete(final ProtelisNode node, final ProtelisProgram prog) {
-		super(node);
-		program = prog;
-		addReadMolecule(program);
-	}
+    private static final long serialVersionUID = -4113718948444451107L;
+    private final ProtelisProgram program;
 
-	@Override
-	public ComputationalRoundComplete cloneOnNewNode(final INode<Object> n) {
-		return new ComputationalRoundComplete((ProtelisNode) n, program);
-	}
+    /**
+     * @param node
+     *            the local node
+     * @param prog
+     *            the reference {@link ProtelisProgram}
+     */
+    public ComputationalRoundComplete(final ProtelisNode node, final ProtelisProgram prog) {
+        super(node);
+        program = prog;
+        addReadMolecule(program);
+    }
 
-	@Override
-	public Context getContext() {
-		return Context.LOCAL;
-	}
+    @Override
+    public ComputationalRoundComplete cloneOnNewNode(final INode<Object> n) {
+        return new ComputationalRoundComplete((ProtelisNode) n, program);
+    }
 
-	@Override
-	public double getPropensityConditioning() {
-		return isValid() ? 1 : 0;
-	}
+    @Override
+    public Context getContext() {
+        return Context.LOCAL;
+    }
 
-	@Override
-	public boolean isValid() {
-		return program.isComputationalCycleComplete();
-	}
-	
-	@Override
-	public ProtelisNode getNode() {
-		return (ProtelisNode) super.getNode();
-	}
+    @Override
+    public double getPropensityConditioning() {
+        return isValid() ? 1 : 0;
+    }
+
+    @Override
+    public boolean isValid() {
+        return program.isComputationalCycleComplete();
+    }
+
+    @Override
+    public ProtelisNode getNode() {
+        return (ProtelisNode) super.getNode();
+    }
 
 }

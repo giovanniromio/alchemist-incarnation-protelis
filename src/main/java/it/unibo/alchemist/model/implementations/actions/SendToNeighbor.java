@@ -16,38 +16,42 @@ import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 import java.util.Objects;
 
 /**
- * @author Danilo Pianini
- *
  */
 public class SendToNeighbor extends AbstractLocalAction<Object> {
-	
-	private static final long serialVersionUID = -8826563176323247613L;
-	private final ProtelisNode myNode;
-	private final ProtelisProgram prog;
 
-	public SendToNeighbor(final ProtelisNode node, final ProtelisProgram program) {
-		super(node);
-		Objects.requireNonNull(program);
-		prog = program;
-		myNode = node;
-	}
+    private static final long serialVersionUID = -8826563176323247613L;
+    private final ProtelisNode myNode;
+    private final ProtelisProgram prog;
 
-	@Override
-	public SendToNeighbor cloneOnNewNode(final INode<Object> n, final IReaction<Object> r) {
-		return new SendToNeighbor((ProtelisNode) n, prog);
-	}
+    /**
+     * @param node
+     *            the local node
+     * @param program
+     *            the reference {@link ProtelisProgram}
+     */
+    public SendToNeighbor(final ProtelisNode node, final ProtelisProgram program) {
+        super(node);
+        Objects.requireNonNull(program);
+        prog = program;
+        myNode = node;
+    }
 
-	@Override
-	public void execute() {
-		final AlchemistNetworkManager mgr = myNode.getNetworkManager(prog);
-		Objects.requireNonNull(mgr);
-		mgr.simulateMessageArrival();
-		prog.prepareForComputationalCycle();
-	}
-	
-	@Override
-	public ProtelisNode getNode() {
-		return myNode;
-	}
+    @Override
+    public SendToNeighbor cloneOnNewNode(final INode<Object> n, final IReaction<Object> r) {
+        return new SendToNeighbor((ProtelisNode) n, prog);
+    }
+
+    @Override
+    public void execute() {
+        final AlchemistNetworkManager mgr = myNode.getNetworkManager(prog);
+        Objects.requireNonNull(mgr);
+        mgr.simulateMessageArrival();
+        prog.prepareForComputationalCycle();
+    }
+
+    @Override
+    public ProtelisNode getNode() {
+        return myNode;
+    }
 
 }
