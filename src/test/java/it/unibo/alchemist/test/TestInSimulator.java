@@ -93,6 +93,14 @@ public class TestInSimulator {
         });
     }
 
+    /**
+     * @throws Exception in case of failure
+     */
+    @Test
+    public void testDistanceTo() throws Exception { 
+        runSimulation("distanceTo.psim", LONG_SIMULATION_FINAL_TIME);
+    }
+
     @SafeVarargs
     private static <T> void runSimulation(final String relativeFilePath, final double finalTime, final Consumer<IEnvironment<Object>>... checkProcedures) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, SAXException, IOException, ParserConfigurationException, InterruptedException, ExecutionException  {
         final Resource res = XTEXT.getResource(URI.createURI("classpath:/simulations/" + relativeFilePath), true);
