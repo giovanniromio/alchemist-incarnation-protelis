@@ -47,12 +47,10 @@ public final class ProtelisIncarnation implements Incarnation {
             .expireAfterAccess(1, TimeUnit.HOURS).expireAfterWrite(1, TimeUnit.HOURS).build();
 
     static {
-        NAMES = Collections
-                .unmodifiableSet(
-                        Arrays.stream(ANS_NAMES)
-                                .flatMap(n -> Arrays
-                                        .stream(new String[] { n.toLowerCase(Locale.US), n.toUpperCase(Locale.US) }))
-                        .map(FasterString::new).collect(Collectors.toSet()));
+        NAMES = Collections.unmodifiableSet(Arrays.stream(ANS_NAMES)
+                .flatMap(n -> Arrays.stream(new String[] { n.toLowerCase(Locale.US), n.toUpperCase(Locale.US) }))
+                .map(FasterString::new)
+                .collect(Collectors.toSet()));
     }
 
     private static final ProtelisIncarnation SINGLETON = new ProtelisIncarnation();
