@@ -13,11 +13,9 @@ buildscript {
     }
     dependencies {
         classpath 'org.danilopianini:smartrrr:0.0.0'
-        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3'
     }
 }
 apply plugin: 'org.danilopianini.smartrrr'
-apply plugin: 'io.codearte.nexus-staging'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
