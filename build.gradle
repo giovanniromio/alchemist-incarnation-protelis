@@ -95,7 +95,7 @@ task aggregateJavadoc(type: Javadoc) {
         docTitle "$projectLongName $project.version reference API"
         links 'http://docs.oracle.com/javase/8/docs/api/'
         links 'http://trove4j.sourceforge.net/javadocs/'
-        links 'http://efesto.apice.unibo.it/protelis-build/protelis/build/docs/javadoc/'
+        links 'http://hephaestus.apice.unibo.it/protelis-build/protelis/build/docs/javadoc/'
         doclet 'org.jboss.apiviz.APIviz'
         docletpath file(configurations.doclet.asPath)
     }
