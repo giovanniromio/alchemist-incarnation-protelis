@@ -10,14 +10,17 @@ package it.unibo.alchemist.model;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.danilopianini.lang.LangUtils;
 import org.danilopianini.lang.util.FasterString;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.lang.datatype.DeviceUID;
@@ -30,20 +33,25 @@ import org.protelis.vm.util.CodePath;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.Lists;
 
+import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
+import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
+import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
+import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.model.interfaces.Node;
-import it.unibo.alchemist.model.interfaces.Reaction;
-import it.unibo.alchemist.model.interfaces.TimeDistribution;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.TimeDistribution;
 
 /**
  */
@@ -223,31 +231,109 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         return new DiracComb<>(new DoubleTime(rand.nextDouble() / frequency), frequency);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Reaction<Object> createReaction(final RandomGenerator rand, final Environment<Object> env,
             final Node<Object> node, final TimeDistribution<Object> time, final String param) {
-//        final 
-//        if ("send".equals(param)) {
-//            
-//        }
-//        return new it.unibo.alchemist.model.implementations.actions.ProtelisProgram(
-//                env,
-//                (ProtelisNode) node, r, rand, prog);
-        throw new UnsupportedOperationException("Needs to get implemented yet");
+        LangUtils.requireNonNull(node, time);
+        final Reaction<Object> result = new Event<>(node, time);
+        if (param != null) {
+            result.setActions(Lists.newArrayList(createAction(rand, env, node, time, result, param)));
+        }
+        if ("send".equalsIgnoreCase(param)) {
+            result.setConditions(Lists.newArrayList(createCondition(rand, env, node, time, result, null)));
+        }
+        return result;
     }
 
     @Override
     public Condition<Object> createCondition(final RandomGenerator rand, final Environment<Object> env,
             final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
             final String param) {
-        throw new UnsupportedOperationException("Needs to get implemented yet");
+        if (node instanceof ProtelisNode) {
+            final ProtelisNode pNode = (ProtelisNode) node;
+            /*
+             * The list of ProtelisPrograms that have already been completed with a ComputationalRoundComplete condition
+             */
+            final List<RunProtelisProgram> alreadyDone = pNode.getReactions()
+                .parallelStream()
+                .flatMap(r -> r.getConditions().parallelStream())
+                .filter(c -> c instanceof ComputationalRoundComplete)
+                .map(c -> (ComputationalRoundComplete) c)
+                .flatMap(crc -> crc.getInfluencingMolecules().parallelStream())
+                .filter(mol -> mol instanceof RunProtelisProgram)
+                .map(mol -> (RunProtelisProgram) mol)
+                .collect(Collectors.toList());
+            final List<RunProtelisProgram> pList = getIncomplete(pNode, alreadyDone);
+            if (pList.isEmpty()) {
+                throw new IllegalStateException("There is no program requiring a "
+                        + ComputationalRoundComplete.class.getSimpleName() + " condition");
+            }
+            if (pList.size() > 1) {
+                throw new IllegalStateException("There are too many programs requiring a "
+                        + ComputationalRoundComplete.class.getName() + " condition: " + pList);
+            }
+            return new ComputationalRoundComplete(pNode, pList.get(0));
+        }
+        throw new IllegalArgumentException("The node must be an instance of " + ProtelisNode.class.getSimpleName()
+                + ", it is a " + node.getClass().getName() + " instead");
     }
 
     @Override
     public Action<Object> createAction(final RandomGenerator rand, final Environment<Object> env,
             final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
             final String param) {
-        throw new UnsupportedOperationException("Needs to get implemented yet");
+        Objects.requireNonNull(param);
+        if (node instanceof ProtelisNode) {
+            final ProtelisNode pNode = (ProtelisNode) node;
+            if (param.equalsIgnoreCase("send")) {
+                final List<RunProtelisProgram> alreadyDone = pNode.getReactions()
+                    .parallelStream()
+                    .flatMap(r -> r.getActions().parallelStream())
+                    .filter(a -> a instanceof SendToNeighbor)
+                    .map(c -> (SendToNeighbor) c)
+                    .map(crc -> crc.getProtelisProgram())
+                    .collect(Collectors.toList());
+                final List<RunProtelisProgram> pList = getIncomplete(pNode, alreadyDone);
+                if (pList.isEmpty()) {
+                    throw new IllegalStateException("There is no program requiring a "
+                            + SendToNeighbor.class.getSimpleName() + " action");
+                }
+                if (pList.size() > 1) {
+                    throw new IllegalStateException("There are too many programs requiring a "
+                            + SendToNeighbor.class.getName() + " action: " + pList);
+                }
+                return new SendToNeighbor(pNode, pList.get(0));
+            } else {
+                try {
+                    return new RunProtelisProgram(env, pNode, reaction, rand, param);
+                } catch (ClassNotFoundException | RuntimeException e) {
+                    throw new IllegalArgumentException("Could not create the requested Protelis program: " + param, e);
+                }
+            }
+        }
+        throw new IllegalArgumentException("The node must be an instance of " + ProtelisNode.class.getSimpleName()
+                + ", it is a " + node.getClass().getName() + " instead");
+    }
+
+    private static List<RunProtelisProgram> getIncomplete(final ProtelisNode pNode, final List<RunProtelisProgram> alreadyDone) {
+        return pNode.getReactions().parallelStream()
+                /*
+                 * Get the actions
+                 */
+                .flatMap(r -> r.getActions().parallelStream())
+                /*
+                 * Get only the ProtelisPrograms
+                 */
+                .filter(a -> a instanceof RunProtelisProgram)
+                .map(a -> (RunProtelisProgram) a)
+                /*
+                 * Retain only those ProtelisPrograms that have no associated ComputationalRoundComplete.
+                 * 
+                 * Only one should be available.
+                 */
+                .filter(prog -> !alreadyDone.contains(prog))
+                .collect(Collectors.toList());
     }
 
 }
