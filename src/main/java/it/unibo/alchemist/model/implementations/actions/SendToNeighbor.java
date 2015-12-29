@@ -21,15 +21,15 @@ public class SendToNeighbor extends AbstractLocalAction<Object> {
 
     private static final long serialVersionUID = -8826563176323247613L;
     private final ProtelisNode myNode;
-    private final ProtelisProgram prog;
+    private final RunProtelisProgram prog;
 
     /**
      * @param node
      *            the local node
      * @param program
-     *            the reference {@link ProtelisProgram}
+     *            the reference {@link RunProtelisProgram}
      */
-    public SendToNeighbor(final ProtelisNode node, final ProtelisProgram program) {
+    public SendToNeighbor(final ProtelisNode node, final RunProtelisProgram program) {
         super(node);
         Objects.requireNonNull(program);
         prog = program;
@@ -52,6 +52,10 @@ public class SendToNeighbor extends AbstractLocalAction<Object> {
     @Override
     public ProtelisNode getNode() {
         return myNode;
+    }
+    
+    public RunProtelisProgram getProtelisProgram() {
+        return prog;
     }
 
 }

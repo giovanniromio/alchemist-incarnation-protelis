@@ -9,7 +9,7 @@
 package it.unibo.alchemist.model.implementations.nodes;
 
 import it.unibo.alchemist.model.ProtelisIncarnation;
-import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
+import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
@@ -25,7 +25,7 @@ import org.protelis.vm.ExecutionEnvironment;
 public class ProtelisNode extends GenericNode<Object>implements DeviceUID, ExecutionEnvironment {
 
     private static final long serialVersionUID = 7411790948884770553L;
-    private final Map<ProtelisProgram, AlchemistNetworkManager> netmgrs = new ConcurrentHashMap<>();
+    private final Map<RunProtelisProgram, AlchemistNetworkManager> netmgrs = new ConcurrentHashMap<>();
 
     /**
      * Builds a new {@link ProtelisNode}.
@@ -48,21 +48,21 @@ public class ProtelisNode extends GenericNode<Object>implements DeviceUID, Execu
      * Adds a new {@link NetworkManager}.
      * 
      * @param program
-     *            the {@link ProtelisProgram}
+     *            the {@link RunProtelisProgram}
      * @param netmgr
      *            the {@link AlchemistNetworkManager}
      */
-    public void addNetworkManger(final ProtelisProgram program, final AlchemistNetworkManager netmgr) {
+    public void addNetworkManger(final RunProtelisProgram program, final AlchemistNetworkManager netmgr) {
         netmgrs.put(program, netmgr);
     }
 
     /**
      * @param program
-     *            the {@link ProtelisProgram}
+     *            the {@link RunProtelisProgram}
      * @return the {@link AlchemistNetworkManager} for this specific
-     *         {@link ProtelisProgram}
+     *         {@link RunProtelisProgram}
      */
-    public AlchemistNetworkManager getNetworkManager(final ProtelisProgram program) {
+    public AlchemistNetworkManager getNetworkManager(final RunProtelisProgram program) {
         Objects.requireNonNull(program);
         return netmgrs.get(program);
     }

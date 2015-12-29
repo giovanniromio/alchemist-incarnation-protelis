@@ -15,7 +15,7 @@ import it.unibo.alchemist.core.implementations.Engine;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.language.EnvironmentBuilder;
 import it.unibo.alchemist.language.protelis.ProtelisDSLStandaloneSetup;
-import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
+import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Node;
@@ -87,7 +87,7 @@ public class TestInSimulator {
         runSimulation("nbr02.psim", LONG_SIMULATION_FINAL_TIME, env -> {
             final double val = (Double) env.getNodes().stream()
                     .flatMap(n -> n.getContents().entrySet().stream())
-                    .filter(e -> e.getKey() instanceof ProtelisProgram)
+                    .filter(e -> e.getKey() instanceof RunProtelisProgram)
                     .findAny().get().getValue();
             checkProgramValueOnAll(v -> assertEquals(val, v)).accept(env);
         });
@@ -135,9 +135,9 @@ public class TestInSimulator {
     private static <T> Consumer<Node<T>> checkProtelisProgramValue(final Consumer<Object> check) {
         return n -> n.forEach(r -> {
             r.getActions().parallelStream()
-                .filter(a -> a instanceof ProtelisProgram)
+                .filter(a -> a instanceof RunProtelisProgram)
                 .forEach(a -> {
-                    check.accept(n.getConcentration((ProtelisProgram) a));
+                    check.accept(n.getConcentration((RunProtelisProgram) a));
                 });
             });
     }

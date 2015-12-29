@@ -12,7 +12,7 @@ import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.NetworkManager;
 import org.protelis.vm.util.CodePath;
 
-import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
+import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Environment;
 
@@ -28,7 +28,7 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
     private static final long serialVersionUID = -7028533174885876642L;
     private final Environment<Object> env;
     private final ProtelisNode node;
-    private final ProtelisProgram prog;
+    private final RunProtelisProgram prog;
     private Map<DeviceUID, Map<CodePath, Object>> msgs = new LinkedHashMap<>();
     private Map<CodePath, Object> toBeSent;
 
@@ -38,9 +38,9 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      * @param local
      *            the node
      * @param program
-     *            the {@link ProtelisProgram}
+     *            the {@link RunProtelisProgram}
      */
-    public AlchemistNetworkManager(final Environment<Object> environment, final ProtelisNode local, final ProtelisProgram program) {
+    public AlchemistNetworkManager(final Environment<Object> environment, final ProtelisNode local, final RunProtelisProgram program) {
         env = environment;
         node = local;
         prog = program;
