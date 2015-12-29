@@ -11,14 +11,14 @@ package it.unibo.alchemist.test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import it.unibo.alchemist.core.implementations.Simulation;
-import it.unibo.alchemist.core.interfaces.ISimulation;
+import it.unibo.alchemist.core.implementations.Engine;
+import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.language.EnvironmentBuilder;
 import it.unibo.alchemist.language.protelis.ProtelisDSLStandaloneSetup;
 import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
 import it.unibo.alchemist.model.implementations.times.DoubleTime;
-import it.unibo.alchemist.model.interfaces.IEnvironment;
-import it.unibo.alchemist.model.interfaces.INode;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Node;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -102,7 +102,7 @@ public class TestInSimulator {
     }
 
     @SafeVarargs
-    private static <T> void runSimulation(final String relativeFilePath, final double finalTime, final Consumer<IEnvironment<Object>>... checkProcedures) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, SAXException, IOException, ParserConfigurationException, InterruptedException, ExecutionException  {
+    private static <T> void runSimulation(final String relativeFilePath, final double finalTime, final Consumer<Environment<Object>>... checkProcedures) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, SAXException, IOException, ParserConfigurationException, InterruptedException, ExecutionException  {
         final Resource res = XTEXT.getResource(URI.createURI("classpath:/simulations/" + relativeFilePath), true);
         final IGenerator generator = INJECTOR.getInstance(IGenerator.class);
         final InMemoryFileSystemAccess fsa = INJECTOR.getInstance(InMemoryFileSystemAccess.class);
@@ -112,8 +112,8 @@ public class TestInSimulator {
             fail();
         }
         final ByteArrayInputStream strIS = new ByteArrayInputStream(files.stream().findFirst().get().toString().getBytes(Charsets.UTF_8));
-        final IEnvironment<Object> env = EnvironmentBuilder.build(strIS).get().getEnvironment();
-        final ISimulation<Object> sim = new Simulation<>(env, new DoubleTime(finalTime));
+        final Environment<Object> env = EnvironmentBuilder.build(strIS).get().getEnvironment();
+        final Simulation<Object> sim = new Engine<>(env, new DoubleTime(finalTime));
         sim.play();
         /*
          * Use this thread: intercept failures.
@@ -122,17 +122,17 @@ public class TestInSimulator {
         Arrays.stream(checkProcedures).forEachOrdered(p -> p.accept(env));
     }
 
-    private static <T> Consumer<IEnvironment<T>> checkOnNodes(final Consumer<INode<T>> proc) {
+    private static <T> Consumer<Environment<T>> checkOnNodes(final Consumer<Node<T>> proc) {
         return env -> env.forEach(n -> {
             proc.accept(n);
         });
     }
 
-    private static <T> Consumer<IEnvironment<T>> checkProgramValueOnAll(final Consumer<Object> proc) {
+    private static <T> Consumer<Environment<T>> checkProgramValueOnAll(final Consumer<Object> proc) {
         return checkOnNodes(checkProtelisProgramValue(proc));
     }
 
-    private static <T> Consumer<INode<T>> checkProtelisProgramValue(final Consumer<Object> check) {
+    private static <T> Consumer<Node<T>> checkProtelisProgramValue(final Consumer<Object> check) {
         return n -> n.forEach(r -> {
             r.getActions().parallelStream()
                 .filter(a -> a instanceof ProtelisProgram)

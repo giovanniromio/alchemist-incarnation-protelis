@@ -10,7 +10,7 @@ package it.unibo.alchemist.model.implementations.nodes;
 
 import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
-import it.unibo.alchemist.model.interfaces.IMolecule;
+import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 import java.util.Map;
@@ -67,7 +67,7 @@ public class ProtelisNode extends GenericNode<Object>implements DeviceUID, Execu
         return netmgrs.get(program);
     }
 
-    private static IMolecule makeMol(final String id) {
+    private static Molecule makeMol(final String id) {
         return ProtelisIncarnation.instance().createMolecule(id);
     }
 

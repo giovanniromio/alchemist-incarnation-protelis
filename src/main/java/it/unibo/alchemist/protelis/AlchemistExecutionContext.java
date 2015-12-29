@@ -8,39 +8,39 @@ import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.Tuple;
 import org.protelis.vm.impl.AbstractExecutionContext;
 
-import it.unibo.alchemist.external.cern.jet.random.engine.RandomEngine;
+import org.apache.commons.math3.random.RandomGenerator;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.implementations.positions.LatLongPosition;
-import it.unibo.alchemist.model.interfaces.IEnvironment;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.IMapEnvironment;
-import it.unibo.alchemist.model.interfaces.INode;
-import it.unibo.alchemist.model.interfaces.IPosition;
-import it.unibo.alchemist.model.interfaces.IReaction;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Position;
+import it.unibo.alchemist.model.interfaces.Reaction;
 
 /**
  */
 public class AlchemistExecutionContext extends AbstractExecutionContext {
 
     private final ProtelisNode node;
-    private final IEnvironment<Object> env;
-    private final IReaction<Object> react;
-    private final RandomEngine rand;
+    private final Environment<Object> env;
+    private final Reaction<Object> react;
+    private final RandomGenerator rand;
     private int hash;
 
     /**
      * @param environment
-     *            the simulation {@link IEnvironment}
+     *            the simulation {@link Environment}
      * @param localNode
      *            the local {@link ProtelisNode}
      * @param reaction
-     *            the {@link IReaction} hosting the program
+     *            the {@link Reaction} hosting the program
      * @param random
-     *            the {@link RandomEngine} for this simulation
+     *            the {@link RandomGenerator} for this simulation
      * @param netmgr
      *            the {@link AlchemistNetworkManager} to be used
      */
-    public AlchemistExecutionContext(final IEnvironment<Object> environment, final ProtelisNode localNode,
-            final IReaction<Object> reaction, final RandomEngine random, final AlchemistNetworkManager netmgr) {
+    public AlchemistExecutionContext(final Environment<Object> environment, final ProtelisNode localNode,
+            final Reaction<Object> reaction, final RandomGenerator random, final AlchemistNetworkManager netmgr) {
         super(localNode, netmgr);
         env = environment;
         node = localNode;
@@ -60,7 +60,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
 
     /**
      * Computes the distance between two nodes, through
-     * {@link IEnvironment#getDistanceBetweenNodes(INode, INode)}.
+     * {@link Environment#getDistanceBetweenNodes(Node, Node)}.
      * 
      * @param target
      *            the target device
@@ -72,9 +72,9 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
     }
 
     /**
-     * @return the device position, in form of {@link IPosition}
+     * @return the device position, in form of {@link Position}
      */
-    public IPosition getDevicePosition() {
+    public Position getDevicePosition() {
         return env.getPosition(node);
     }
 
@@ -123,7 +123,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
      *            the destination, in form of a destination node
      * @return the distance on a map
      */
-    public double routingDistance(final INode<Object> dest) {
+    public double routingDistance(final Node<Object> dest) {
         return routingDistance(env.getPosition(dest));
     }
 
@@ -134,7 +134,7 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
      *            the destination
      * @return the distance on a map
      */
-    public double routingDistance(final IPosition dest) {
+    public double routingDistance(final Position dest) {
         if (env instanceof IMapEnvironment<?>) {
             return ((IMapEnvironment<Object>) env).computeRoute(node, dest).getDistance();
         }

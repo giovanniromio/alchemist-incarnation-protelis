@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.danilopianini.lang.util.FasterString;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.lang.datatype.DeviceUID;
@@ -30,15 +31,22 @@ import org.protelis.vm.util.CodePath;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import it.unibo.alchemist.model.implementations.molecules.Molecule;
+import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
-import it.unibo.alchemist.model.interfaces.IMolecule;
-import it.unibo.alchemist.model.interfaces.INode;
+import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
+import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
+import it.unibo.alchemist.model.interfaces.TimeDistribution;
+import it.unibo.alchemist.model.interfaces.Action;
+import it.unibo.alchemist.model.interfaces.Condition;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Incarnation;
 
 /**
  */
-public final class ProtelisIncarnation implements Incarnation {
+public final class ProtelisIncarnation implements Incarnation<Object> {
 
     private static final String[] ANS_NAMES = { "ans", "res", "result", "answer", "val", "value" };
     private static final Set<FasterString> NAMES;
@@ -56,7 +64,7 @@ public final class ProtelisIncarnation implements Incarnation {
     private static final ProtelisIncarnation SINGLETON = new ProtelisIncarnation();
 
     @Override
-    public double getProperty(final INode<?> node, final IMolecule mol, final String prop) {
+    public double getProperty(final Node<Object> node, final Molecule mol, final String prop) {
         Object val = node.getConcentration(mol);
         Optional<ProtelisProgram> prog = cache.getIfPresent(prop);
         if (prog == null) {
@@ -90,7 +98,7 @@ public final class ProtelisIncarnation implements Incarnation {
         return Double.NaN;
     }
 
-    private static Object preprocess(final Optional<ProtelisProgram> prog, final Object val, final INode<?> node) {
+    private static Object preprocess(final Optional<ProtelisProgram> prog, final Object val, final Node<?> node) {
         try {
             if (prog.isPresent()) {
                 final ExecutionContext ctx = new DummyContext(node);
@@ -111,8 +119,8 @@ public final class ProtelisIncarnation implements Incarnation {
     }
 
     @Override
-    public IMolecule createMolecule(final String s) {
-        return new Molecule(s);
+    public Molecule createMolecule(final String s) {
+        return new SimpleMolecule(s);
     }
 
     @Override
@@ -128,8 +136,8 @@ public final class ProtelisIncarnation implements Incarnation {
     }
 
     private static class DummyContext extends AbstractExecutionContext {
-        private final INode<?> node;
-        DummyContext(final INode<?> node) {
+        private final Node<?> node;
+        DummyContext(final Node<?> node) {
             super(new ExecutionEnvironment() {
                 @Override
                 public void setup() {
@@ -144,7 +152,7 @@ public final class ProtelisIncarnation implements Incarnation {
                 }
                 @Override
                 public boolean has(final String id) {
-                    return node.contains(new Molecule(id));
+                    return node.contains(new SimpleMolecule(id));
                 }
                 @Override
                 public Object get(final String id, final Object defaultValue) {
@@ -152,7 +160,7 @@ public final class ProtelisIncarnation implements Incarnation {
                 }
                 @Override
                 public Object get(final String id) {
-                    return node.getConcentration(new Molecule(id));
+                    return node.getConcentration(new SimpleMolecule(id));
                 }
                 @Override
                 public void commit() {
@@ -189,6 +197,53 @@ public final class ProtelisIncarnation implements Incarnation {
             return this;
         }
 
+    }
+
+    @Override
+    public Node<Object> createNode(final RandomGenerator rand, final Environment<Object> env, final String param) {
+        return new ProtelisNode();
+    }
+
+    @Override
+    public TimeDistribution<Object> createTimeDistribution(
+            final RandomGenerator rand,
+            final Environment<Object> env,
+            final Node<Object> node,
+            final String param) {
+//        try {
+//            final double frequency = Double.parseDouble(param);
+//            return new DiracComb<>(frequency, rand.nextDouble() / frequency);
+//        } catch (final NumberFormatException e) {
+//            return new Exponential
+//        }
+        throw new UnsupportedOperationException("Needs to get implemented yet");
+    }
+
+    @Override
+    public Reaction<Object> createReaction(final RandomGenerator rand, final Environment<Object> env,
+            final Node<Object> node, final TimeDistribution<Object> time, final String param) {
+//        final 
+//        if ("send".equals(param)) {
+//            
+//        }
+//        return new it.unibo.alchemist.model.implementations.actions.ProtelisProgram(
+//                env,
+//                (ProtelisNode) node, r, rand, prog);
+        throw new UnsupportedOperationException("Needs to get implemented yet");
+    }
+
+    @Override
+    public Condition<Object> createCondition(final RandomGenerator rand, final Environment<Object> env,
+            final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
+            final String param) {
+        throw new UnsupportedOperationException("Needs to get implemented yet");
+    }
+
+    @Override
+    public Action<Object> createAction(final RandomGenerator rand, final Environment<Object> env,
+            final Node<Object> node, final TimeDistribution<Object> time, final Reaction<Object> reaction,
+            final String param) {
+        throw new UnsupportedOperationException("Needs to get implemented yet");
     }
 
 }

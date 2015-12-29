@@ -8,15 +8,15 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
-import it.unibo.alchemist.external.cern.jet.random.engine.RandomEngine;
-import it.unibo.alchemist.model.implementations.molecules.Molecule;
+import org.apache.commons.math3.random.RandomGenerator;
+import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.IAction;
-import it.unibo.alchemist.model.interfaces.IEnvironment;
-import it.unibo.alchemist.model.interfaces.IMolecule;
-import it.unibo.alchemist.model.interfaces.INode;
-import it.unibo.alchemist.model.interfaces.IReaction;
+import it.unibo.alchemist.model.interfaces.Action;
+import it.unibo.alchemist.model.interfaces.Environment;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.protelis.AlchemistExecutionContext;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
@@ -36,14 +36,15 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  */
 @SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS", justification = "This is desired.")
-public class ProtelisProgram extends Molecule implements IAction<Object> {
+public class ProtelisProgram extends SimpleMolecule implements Action<Object> {
 
     private static final long serialVersionUID = 2207914086772704332L;
-    private final IEnvironment<Object> environment;
+    private final Environment<Object> environment;
     private final ProtelisNode node;
-    private final IReaction<Object> reaction;
+    private final Reaction<Object> reaction;
     private final org.protelis.vm.ProtelisProgram program;
-    private final RandomEngine random;
+    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "All the random engines provided by Apache are Serializable")
+    private final RandomGenerator random;
     private transient ProtelisVM vm;
     private boolean computationalCycleComplete;
 
@@ -57,10 +58,10 @@ public class ProtelisProgram extends Molecule implements IAction<Object> {
      * @throws ClassNotFoundException if required classes can not be found
      */
     public ProtelisProgram(
-            final IEnvironment<Object> env,
+            final Environment<Object> env,
             final ProtelisNode n,
-            final IReaction<Object> r,
-            final RandomEngine rand,
+            final Reaction<Object> r,
+            final RandomGenerator rand,
             final String prog) throws SecurityException, ClassNotFoundException {
         this(env, n, r, rand, programFromString(prog));
     }
@@ -82,10 +83,10 @@ public class ProtelisProgram extends Molecule implements IAction<Object> {
     }
 
     private ProtelisProgram(
-            final IEnvironment<Object> env,
+            final Environment<Object> env,
             final ProtelisNode n,
-            final IReaction<Object> r,
-            final RandomEngine rand,
+            final Reaction<Object> r,
+            final RandomGenerator rand,
             final org.protelis.vm.ProtelisProgram prog) {
         super(prog.getName());
         Objects.requireNonNull(env);
@@ -105,7 +106,7 @@ public class ProtelisProgram extends Molecule implements IAction<Object> {
     }
 
     @Override
-    public ProtelisProgram cloneOnNewNode(final INode<Object> n, final IReaction<Object> r) {
+    public ProtelisProgram cloneOnNewNode(final Node<Object> n, final Reaction<Object> r) {
         if (n instanceof ProtelisNode) {
             return new ProtelisProgram(environment, (ProtelisNode) n, r, random, program);
         }
@@ -123,7 +124,7 @@ public class ProtelisProgram extends Molecule implements IAction<Object> {
     /**
      * @return the environment
      */
-    protected final IEnvironment<Object> getEnvironment() {
+    protected final Environment<Object> getEnvironment() {
         return environment;
     }
 
@@ -135,7 +136,7 @@ public class ProtelisProgram extends Molecule implements IAction<Object> {
     }
 
     @Override
-    public List<? extends IMolecule> getModifiedMolecules() {
+    public List<? extends Molecule> getModifiedMolecules() {
         /*
          * A Protelis program may modify any molecule (global variable)
          */

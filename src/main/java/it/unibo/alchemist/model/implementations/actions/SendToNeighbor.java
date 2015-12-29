@@ -9,8 +9,8 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
-import it.unibo.alchemist.model.interfaces.INode;
-import it.unibo.alchemist.model.interfaces.IReaction;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 import java.util.Objects;
@@ -37,7 +37,7 @@ public class SendToNeighbor extends AbstractLocalAction<Object> {
     }
 
     @Override
-    public SendToNeighbor cloneOnNewNode(final INode<Object> n, final IReaction<Object> r) {
+    public SendToNeighbor cloneOnNewNode(final Node<Object> n, final Reaction<Object> r) {
         return new SendToNeighbor((ProtelisNode) n, prog);
     }
 

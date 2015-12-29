@@ -8,11 +8,11 @@
  */
 package it.unibo.alchemist.model.implementations.concentrations;
 
-import it.unibo.alchemist.model.interfaces.IConcentration;
+import it.unibo.alchemist.model.interfaces.Concentration;
 
 /**
  */
-public class Local implements IConcentration<Object> {
+public class Local implements Concentration<Object> {
 
     private static final long serialVersionUID = 4137133493821814841L;
     private final Object content;

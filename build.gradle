@@ -52,14 +52,12 @@ configurations {
 }
 
 dependencies {
-	compile "com.google.guava:guava:$guavaVersion"
-	compile "org.protelis:protelis:$protelisVersion"
-	compile "org.danilopianini:javalib-java7:$javalib7Version"
-    compile "it.unibo.alchemist:alchemist-interfaces:$interfacesVersion"
-    compile "it.unibo.alchemist:alchemist-baselib:$baselibVersion"
-    compile "it.unibo.alchemist:alchemist-implementationbase:$implbaseVersion"
-    compile "it.unibo.alchemist:alchemist-maps:$mapsVersion"
     compile "com.google.code.findbugs:findbugs:$findBugsVersion"
+    compile "com.google.guava:guava:$guavaVersion"
+    compile "it.unibo.alchemist:alchemist-interfaces:$interfacesVersion"
+    compile "it.unibo.alchemist:alchemist-maps:$mapsVersion"
+    compile "org.protelis:protelis:$protelisVersion"
+    compile "org.danilopianini:javalib-java7:$javalib7Version"
     
     testCompile "junit:junit:$junitVersion"
     testCompile "it.unibo.alchemist:alchemist.protelisdsl:$protelisdslVersion"
