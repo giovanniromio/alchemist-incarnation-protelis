@@ -53,7 +53,10 @@ public class SendToNeighbor extends AbstractLocalAction<Object> {
     public ProtelisNode getNode() {
         return myNode;
     }
-    
+
+    /**
+     * @return the {@link RunProtelisProgram} whose data will be sent
+     */
     public RunProtelisProgram getProtelisProgram() {
         return prog;
     }
