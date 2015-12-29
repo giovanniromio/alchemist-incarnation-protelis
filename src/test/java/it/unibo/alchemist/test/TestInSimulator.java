@@ -116,7 +116,7 @@ public class TestInSimulator {
         final Simulation<Object> sim = new Engine<>(env, new DoubleTime(finalTime));
         sim.play();
         /*
-         * Use this thread: intercept failures.
+         * Use this thread: intercepts failures.
          */
         sim.run();
         Arrays.stream(checkProcedures).forEachOrdered(p -> p.accept(env));
