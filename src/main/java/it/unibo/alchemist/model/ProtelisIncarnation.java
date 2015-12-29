@@ -35,6 +35,7 @@ import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
+import it.unibo.alchemist.model.implementations.times.DoubleTime;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
@@ -210,13 +211,16 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
             final Environment<Object> env,
             final Node<Object> node,
             final String param) {
-//        try {
-//            final double frequency = Double.parseDouble(param);
-//            return new DiracComb<>(frequency, rand.nextDouble() / frequency);
-//        } catch (final NumberFormatException e) {
-//            return new Exponential
-//        }
-        throw new UnsupportedOperationException("Needs to get implemented yet");
+        if (param == null) {
+            return new ExponentialTime<>(Double.POSITIVE_INFINITY, rand);
+        }
+        double frequency;
+        try {
+            frequency = Double.parseDouble(param);
+        } catch (final NumberFormatException e) {
+            frequency = 1;
+        }
+        return new DiracComb<>(new DoubleTime(rand.nextDouble() / frequency), frequency);
     }
 
     @Override
