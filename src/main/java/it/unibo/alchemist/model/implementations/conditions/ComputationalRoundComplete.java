@@ -8,32 +8,32 @@
  */
 package it.unibo.alchemist.model.implementations.conditions;
 
-import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
+import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
 import it.unibo.alchemist.model.interfaces.Context;
-import it.unibo.alchemist.model.interfaces.INode;
+import it.unibo.alchemist.model.interfaces.Node;
 
 /**
  */
 public class ComputationalRoundComplete extends AbstractCondition<Object> {
 
     private static final long serialVersionUID = -4113718948444451107L;
-    private final ProtelisProgram program;
+    private final RunProtelisProgram program;
 
     /**
      * @param node
      *            the local node
      * @param prog
-     *            the reference {@link ProtelisProgram}
+     *            the reference {@link RunProtelisProgram}
      */
-    public ComputationalRoundComplete(final ProtelisNode node, final ProtelisProgram prog) {
+    public ComputationalRoundComplete(final ProtelisNode node, final RunProtelisProgram prog) {
         super(node);
         program = prog;
         addReadMolecule(program);
     }
 
     @Override
-    public ComputationalRoundComplete cloneOnNewNode(final INode<Object> n) {
+    public ComputationalRoundComplete cloneOnNewNode(final Node<Object> n) {
         return new ComputationalRoundComplete((ProtelisNode) n, program);
     }
 

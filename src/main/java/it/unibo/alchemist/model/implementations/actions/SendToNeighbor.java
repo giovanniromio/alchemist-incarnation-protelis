@@ -9,8 +9,8 @@
 package it.unibo.alchemist.model.implementations.actions;
 
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
-import it.unibo.alchemist.model.interfaces.INode;
-import it.unibo.alchemist.model.interfaces.IReaction;
+import it.unibo.alchemist.model.interfaces.Node;
+import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 import java.util.Objects;
@@ -21,15 +21,15 @@ public class SendToNeighbor extends AbstractLocalAction<Object> {
 
     private static final long serialVersionUID = -8826563176323247613L;
     private final ProtelisNode myNode;
-    private final ProtelisProgram prog;
+    private final RunProtelisProgram prog;
 
     /**
      * @param node
      *            the local node
      * @param program
-     *            the reference {@link ProtelisProgram}
+     *            the reference {@link RunProtelisProgram}
      */
-    public SendToNeighbor(final ProtelisNode node, final ProtelisProgram program) {
+    public SendToNeighbor(final ProtelisNode node, final RunProtelisProgram program) {
         super(node);
         Objects.requireNonNull(program);
         prog = program;
@@ -37,7 +37,7 @@ public class SendToNeighbor extends AbstractLocalAction<Object> {
     }
 
     @Override
-    public SendToNeighbor cloneOnNewNode(final INode<Object> n, final IReaction<Object> r) {
+    public SendToNeighbor cloneOnNewNode(final Node<Object> n, final Reaction<Object> r) {
         return new SendToNeighbor((ProtelisNode) n, prog);
     }
 
@@ -52,6 +52,13 @@ public class SendToNeighbor extends AbstractLocalAction<Object> {
     @Override
     public ProtelisNode getNode() {
         return myNode;
+    }
+
+    /**
+     * @return the {@link RunProtelisProgram} whose data will be sent
+     */
+    public RunProtelisProgram getProtelisProgram() {
+        return prog;
     }
 
 }

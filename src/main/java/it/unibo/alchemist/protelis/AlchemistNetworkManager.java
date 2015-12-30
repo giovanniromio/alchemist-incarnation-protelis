@@ -12,9 +12,9 @@ import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.NetworkManager;
 import org.protelis.vm.util.CodePath;
 
-import it.unibo.alchemist.model.implementations.actions.ProtelisProgram;
+import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
-import it.unibo.alchemist.model.interfaces.IEnvironment;
+import it.unibo.alchemist.model.interfaces.Environment;
 
 /**
  * Emulates a {@link NetworkManager}. This particular network manager does not
@@ -26,9 +26,9 @@ import it.unibo.alchemist.model.interfaces.IEnvironment;
 public final class AlchemistNetworkManager implements NetworkManager, Serializable {
 
     private static final long serialVersionUID = -7028533174885876642L;
-    private final IEnvironment<Object> env;
+    private final Environment<Object> env;
     private final ProtelisNode node;
-    private final ProtelisProgram prog;
+    private final RunProtelisProgram prog;
     private Map<DeviceUID, Map<CodePath, Object>> msgs = new LinkedHashMap<>();
     private Map<CodePath, Object> toBeSent;
 
@@ -38,9 +38,9 @@ public final class AlchemistNetworkManager implements NetworkManager, Serializab
      * @param local
      *            the node
      * @param program
-     *            the {@link ProtelisProgram}
+     *            the {@link RunProtelisProgram}
      */
-    public AlchemistNetworkManager(final IEnvironment<Object> environment, final ProtelisNode local, final ProtelisProgram program) {
+    public AlchemistNetworkManager(final Environment<Object> environment, final ProtelisNode local, final RunProtelisProgram program) {
         env = environment;
         node = local;
         prog = program;
