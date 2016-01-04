@@ -40,6 +40,7 @@ import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
+import it.unibo.alchemist.model.implementations.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.implementations.timedistributions.DiracComb;
 import it.unibo.alchemist.model.implementations.timedistributions.ExponentialTime;
@@ -236,11 +237,12 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
     public Reaction<Object> createReaction(final RandomGenerator rand, final Environment<Object> env,
             final Node<Object> node, final TimeDistribution<Object> time, final String param) {
         LangUtils.requireNonNull(node, time);
-        final Reaction<Object> result = new Event<>(node, time);
+        final boolean isSend = "send".equalsIgnoreCase(param);
+        final Reaction<Object> result = isSend ? new ChemicalReaction<>(node, time) : new Event<>(node, time);
         if (param != null) {
             result.setActions(Lists.newArrayList(createAction(rand, env, node, time, result, param)));
         }
-        if ("send".equalsIgnoreCase(param)) {
+        if (isSend) {
             result.setConditions(Lists.newArrayList(createCondition(rand, env, node, time, result, null)));
         }
         return result;
