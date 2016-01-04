@@ -23,6 +23,7 @@ import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
 import it.unibo.alchemist.model.implementations.actions.SendToNeighbor;
 import it.unibo.alchemist.model.implementations.conditions.ComputationalRoundComplete;
 import it.unibo.alchemist.model.implementations.environments.Continuous2DEnvironment;
+import it.unibo.alchemist.model.implementations.reactions.ChemicalReaction;
 import it.unibo.alchemist.model.implementations.reactions.Event;
 import it.unibo.alchemist.model.interfaces.Action;
 import it.unibo.alchemist.model.interfaces.Condition;
@@ -93,7 +94,7 @@ public class TestIncarnation {
 
     private static void testIsSendToNeighbor(final Reaction<Object> program) {
         assertNotNull(program);
-        assertTrue(program instanceof Event);
+        assertTrue(program instanceof ChemicalReaction);
         assertFalse(program.getConditions().isEmpty());
         assertEquals(1, program.getConditions().size());
         final Condition<Object> check = program.getConditions().get(0);
