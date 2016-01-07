@@ -8,30 +8,27 @@
  */
 package it.unibo.alchemist.model.implementations.actions;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.List;
+import java.util.Objects;
+
 import org.apache.commons.math3.random.RandomGenerator;
+import org.protelis.lang.ProtelisLoader;
+import org.protelis.vm.ExecutionContext;
+import org.protelis.vm.ProtelisVM;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule;
 import it.unibo.alchemist.model.implementations.nodes.ProtelisNode;
-import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Action;
+import it.unibo.alchemist.model.interfaces.Context;
 import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.model.interfaces.Node;
 import it.unibo.alchemist.model.interfaces.Reaction;
 import it.unibo.alchemist.protelis.AlchemistExecutionContext;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-
-import org.protelis.lang.ProtelisLoader;
-import org.protelis.vm.ExecutionContext;
-import org.protelis.vm.ProtelisVM;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  */
@@ -70,23 +67,7 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
             final Reaction<Object> r,
             final RandomGenerator rand,
             final String prog) throws SecurityException, ClassNotFoundException {
-        this(env, n, r, rand, programFromString(prog));
-    }
-
-    private static org.protelis.vm.ProtelisProgram programFromString(final String s) {
-        try {
-            new URI(s);
-            /*
-             * Valid URI: directly parse it.
-             */
-            return ProtelisLoader.parse(s);
-        } catch (URISyntaxException e) {
-            /*
-             * URI is not valid: convert the string into a dummy:/ resource,
-             * then interpret it as a program.
-             */
-            return ProtelisLoader.parse(ProtelisLoader.resourceFromString(s));
-        }
+        this(env, n, r, rand, ProtelisLoader.parse(prog));
     }
 
     private RunProtelisProgram(
