@@ -11,9 +11,8 @@ package it.unibo.alchemist.model.implementations.actions;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
-import java.util.Objects;
-
 import org.apache.commons.math3.random.RandomGenerator;
+import org.danilopianini.lang.LangUtils;
 import org.protelis.lang.ProtelisLoader;
 import org.protelis.vm.ExecutionContext;
 import org.protelis.vm.ProtelisVM;
@@ -77,11 +76,7 @@ public class RunProtelisProgram extends SimpleMolecule implements Action<Object>
             final RandomGenerator rand,
             final org.protelis.vm.ProtelisProgram prog) {
         super(prog.getName());
-        Objects.requireNonNull(env);
-        Objects.requireNonNull(r);
-        Objects.requireNonNull(n);
-        Objects.requireNonNull(prog);
-        Objects.requireNonNull(rand);
+        LangUtils.requireNonNull(env, r, n, prog, rand);
         program = prog;
         environment = env;
         node = n;
