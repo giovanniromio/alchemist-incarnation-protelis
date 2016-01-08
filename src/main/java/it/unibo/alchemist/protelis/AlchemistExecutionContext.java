@@ -6,6 +6,7 @@ package it.unibo.alchemist.protelis;
 import org.danilopianini.lang.HashUtils;
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.lang.datatype.Tuple;
+import org.protelis.vm.ExecutionEnvironment;
 import org.protelis.vm.impl.AbstractExecutionContext;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -159,6 +160,11 @@ public class AlchemistExecutionContext extends AbstractExecutionContext {
             hash = HashUtils.hash32(node, env, react);
         }
         return hash;
+    }
+
+    @Override
+    public ExecutionEnvironment getExecutionEnvironment() {
+        return node;
     }
 
 }
