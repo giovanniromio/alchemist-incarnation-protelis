@@ -8,17 +8,19 @@
  */
 package it.unibo.alchemist.model.implementations.nodes;
 
-import it.unibo.alchemist.model.ProtelisIncarnation;
-import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
-import it.unibo.alchemist.model.interfaces.Molecule;
-import it.unibo.alchemist.protelis.AlchemistNetworkManager;
-
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.ExecutionEnvironment;
+import org.protelis.vm.NetworkManager;
+
+import it.unibo.alchemist.model.ProtelisIncarnation;
+import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
+import it.unibo.alchemist.model.interfaces.Molecule;
+import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
 /**
  */
@@ -83,32 +85,28 @@ public class ProtelisNode extends GenericNode<Object>implements DeviceUID, Execu
 
     @Override
     public Object get(final String id, final Object defaultValue) {
-        // TODO Auto-generated method stub
-        return null;
+        return Optional.ofNullable(get(id)).orElse(defaultValue);
     }
 
     @Override
     public boolean put(final String id, final Object v) {
-        // TODO Auto-generated method stub
-        return false;
+        setConcentration(makeMol(id), v);
+        return true;
     }
 
     @Override
     public Object remove(final String id) {
-        // TODO Auto-generated method stub
-        return null;
+        final Object res = get(id);
+        removeConcentration(makeMol(id));
+        return res;
     }
 
     @Override
     public void commit() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setup() {
-        // TODO Auto-generated method stub
-
     }
 
 }
