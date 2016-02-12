@@ -12,13 +12,18 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.protelis.lang.datatype.DeviceUID;
 import org.protelis.vm.ExecutionEnvironment;
 import org.protelis.vm.NetworkManager;
 
+import com.google.common.collect.MapMaker;
+
 import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
@@ -28,12 +33,23 @@ public class ProtelisNode extends GenericNode<Object>implements DeviceUID, Execu
 
     private static final long serialVersionUID = 7411790948884770553L;
     private final Map<RunProtelisProgram, AlchemistNetworkManager> netmgrs = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<Environment<?>, AtomicInteger> IDGENERATOR = new MapMaker()
+            .weakKeys().makeMap();
+    private final int id;
 
     /**
      * Builds a new {@link ProtelisNode}.
+     * 
+     * @param env the environment
      */
-    public ProtelisNode() {
+    public ProtelisNode(final Environment<?> env) {
         super(true);
+        AtomicInteger idgen = IDGENERATOR.get(env);
+        if (idgen == null) {
+            idgen = new AtomicInteger();
+            IDGENERATOR.put(env, idgen);
+        }
+        id = idgen.getAndIncrement();
     }
 
     @Override
@@ -99,6 +115,24 @@ public class ProtelisNode extends GenericNode<Object>implements DeviceUID, Execu
         final Object res = get(id);
         removeConcentration(makeMol(id));
         return res;
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o != null && getClass().equals(o.getClass())) {
+            return id == ((ProtelisNode) o).id;
+        }
+        return false;
     }
 
     @Override

@@ -211,7 +211,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
 
     @Override
     public Node<Object> createNode(final RandomGenerator rand, final Environment<Object> env, final String param) {
-        return new ProtelisNode();
+        return new ProtelisNode(env);
     }
 
     @Override
