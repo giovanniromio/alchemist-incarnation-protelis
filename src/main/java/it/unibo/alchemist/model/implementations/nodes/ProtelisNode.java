@@ -19,6 +19,7 @@ import org.protelis.vm.NetworkManager;
 
 import it.unibo.alchemist.model.ProtelisIncarnation;
 import it.unibo.alchemist.model.implementations.actions.RunProtelisProgram;
+import it.unibo.alchemist.model.interfaces.Environment;
 import it.unibo.alchemist.model.interfaces.Molecule;
 import it.unibo.alchemist.protelis.AlchemistNetworkManager;
 
@@ -31,7 +32,21 @@ public class ProtelisNode extends GenericNode<Object>implements DeviceUID, Execu
 
     /**
      * Builds a new {@link ProtelisNode}.
+     * 
+     * @param env
+     *            the environment
      */
+    public ProtelisNode(final Environment<?> env) {
+        super(env);
+    }
+
+    /**
+     * This constructor exists only for backward compatibility purposes, and
+     * should never be used.
+     * 
+     * @deprecated Scheduled to be dropped.
+     */
+    @Deprecated
     public ProtelisNode() {
         super(true);
     }
