@@ -11,7 +11,9 @@ package it.unibo.alchemist.test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
 import it.unibo.alchemist.core.implementations.Engine;
+import it.unibo.alchemist.core.implementations.Engine.StateCommand;
 import it.unibo.alchemist.core.interfaces.Simulation;
 import it.unibo.alchemist.language.EnvironmentBuilder;
 import it.unibo.alchemist.language.protelis.ProtelisDSLStandaloneSetup;
@@ -114,7 +116,7 @@ public class TestInSimulator {
         final ByteArrayInputStream strIS = new ByteArrayInputStream(files.stream().findFirst().get().toString().getBytes(Charsets.UTF_8));
         final Environment<Object> env = EnvironmentBuilder.build(strIS).get().getEnvironment();
         final Simulation<Object> sim = new Engine<>(env, new DoubleTime(finalTime));
-        sim.play();
+        sim.addCommand(new StateCommand<>().run().build());
         /*
          * Use this thread: intercepts failures.
          */

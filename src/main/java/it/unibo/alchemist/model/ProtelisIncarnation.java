@@ -28,6 +28,7 @@ import org.protelis.vm.ExecutionContext;
 import org.protelis.vm.ExecutionEnvironment;
 import org.protelis.vm.NetworkManager;
 import org.protelis.vm.ProtelisProgram;
+import org.protelis.vm.ProtelisVM;
 import org.protelis.vm.impl.AbstractExecutionContext;
 import org.protelis.vm.util.CodePath;
 
@@ -60,7 +61,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
 
     private static final String[] ANS_NAMES = { "ans", "res", "result", "answer", "val", "value" };
     private static final Set<FasterString> NAMES;
-
+    private static final ProtelisIncarnation SINGLETON = new ProtelisIncarnation();
     private final Cache<String, Optional<ProtelisProgram>> cache = CacheBuilder.newBuilder().maximumSize(100)
             .expireAfterAccess(1, TimeUnit.HOURS).expireAfterWrite(1, TimeUnit.HOURS).build();
 
@@ -70,8 +71,6 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                 .map(FasterString::new)
                 .collect(Collectors.toSet()));
     }
-
-    private static final ProtelisIncarnation SINGLETON = new ProtelisIncarnation();
 
     @Override
     public double getProperty(final Node<Object> node, final Molecule mol, final String prop) {
@@ -196,7 +195,7 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
         }
         @Override
         public Number getCurrentTime() {
-            throw new UnsupportedOperationException();
+            return 0;
         }
         @Override
         public double nextRandomDouble() {
@@ -336,6 +335,21 @@ public final class ProtelisIncarnation implements Incarnation<Object> {
                  */
                 .filter(prog -> !alreadyDone.contains(prog))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Object createConcentration(final String s) {
+        try {
+            final ProtelisProgram program = ProtelisLoader.parse(s);
+            final ProtelisVM vm = new ProtelisVM(program, new DummyContext(null));
+            vm.runCycle();
+            return vm.getCurrentValue();
+        } catch (IllegalArgumentException e) {
+            /*
+             * Not a valid program: inject the String itself
+             */
+            return s;
+        }
     }
 
 }
